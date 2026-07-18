@@ -15,7 +15,6 @@ import {
   Zap,
   Cpu,
   CircuitBoard,
-  Sparkles,
 } from "lucide-react";
 
 interface StatDisplay {
@@ -45,13 +44,6 @@ const features = [
     title: "Hardware Lab",
     description: "Embedded systems, electronics, and hands-on engineering.",
   },
-];
-
-const heroStats = [
-  "Cybersecurity",
-  "AI Systems",
-  "Hackathons",
-  "Hardware",
 ];
 
 export default function Index() {
@@ -97,27 +89,28 @@ export default function Index() {
           <div className="hero-scan-sweep" />
         </div>
         <div className="particle-field absolute inset-0 opacity-[0.05]" />
-        <div className="container relative z-10 mx-auto grid items-center gap-12 lg:grid-cols-[0.88fr_1.12fr]">
-          <div className="max-w-3xl text-left">
-            <div className="section-kicker animate-reveal">
-              <Sparkles className="h-3.5 w-3.5" />
-              Elite engineering team
+        <div className="container relative z-10 mx-auto grid items-center gap-12 lg:grid-cols-[2fr_3fr]">
+          <div className="max-w-lg text-left lg:-translate-y-[3%]">
+            <div className="flex flex-wrap items-center gap-x-2 text-sm font-bold uppercase tracking-wider animate-reveal">
+              <span className="text-[#FF3B30]">Red</span>
+              <span className="text-foreground">team.</span>
+              <span className="text-[#29A9FF]">Blue</span>
+              <span className="text-foreground">team.</span>
             </div>
 
-            <h1 className="mt-7 text-5xl font-black leading-[0.95] text-foreground md:text-7xl lg:text-8xl">
-              <span className="block">w0lf.exe</span>
-              <span className="mt-3 block bg-gradient-to-r from-primary via-foreground to-secondary bg-clip-text text-transparent">
-                builds serious things.
+            <h1 className="mt-6 text-4xl font-black leading-[1.08] text-foreground md:text-5xl lg:text-6xl">
+              <span className="block">We hunt</span>
+              <span className="block bg-gradient-to-r from-[#FF3B30] via-[#c77bd6] to-[#29A9FF] bg-clip-text text-transparent">
+                vulnerabilities.
               </span>
             </h1>
 
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
-              A cybersecurity engineering team working across CTFs, red team,
-              blue team, reverse engineering, digital forensics, exploit
-              development, open-source security, and research.
+            <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground md:text-lg">
+              Offensive minds. Defensive strategies. One mission: secure the
+              digital world.
             </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link to="/projects">
                 <Button variant="cyber" size="lg" className="group w-full sm:w-auto">
                   <Terminal className="h-5 w-5" />
@@ -131,14 +124,6 @@ export default function Index() {
                   Meet the Team
                 </Button>
               </Link>
-            </div>
-
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {heroStats.map((item) => (
-                <div key={item} className="border-l border-primary/[0.35] bg-card/[0.35] px-4 py-3 backdrop-blur-sm">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">{item}</p>
-                </div>
-              ))}
             </div>
           </div>
 
