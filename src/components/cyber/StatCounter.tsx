@@ -58,8 +58,9 @@ export function StatCounter({
   }, [isVisible, end, duration]);
 
   return (
-    <div ref={ref} className={cn("text-center", className)}>
-      <div className="font-display text-4xl md:text-5xl font-bold text-primary cyber-text-glow mb-2">
+    <div ref={ref} className={cn("group text-center", className)}>
+      <div className="mx-auto mb-3 h-px w-8 bg-gradient-to-r from-transparent via-primary/60 to-transparent transition-all duration-300 group-hover:w-14" />
+      <div className="font-display text-5xl font-bold text-primary cyber-text-glow mb-2 md:text-6xl">
         {prefix}
         {count.toLocaleString()}
         {suffix}

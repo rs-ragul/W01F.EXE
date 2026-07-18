@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CyberCard } from "@/components/cyber/CyberCard";
 import { HexagonCard } from "@/components/cyber/HexagonCard";
 import { StatCounter } from "@/components/cyber/StatCounter";
+import { CircuitDivider } from "@/components/cyber/CircuitDivider";
+import { Reveal } from "@/components/cyber/Reveal";
 import { useSiteStats } from "@/hooks/useSiteStats";
 import {
   Shield,
@@ -132,8 +135,10 @@ export default function Index() {
       </section>
 
       {/* Stats Section */}
-      <section className="section-shell">
-        <div className="container mx-auto">
+      <section className="dashboard-panel relative overflow-hidden py-14 md:py-20">
+        <div className="grid-overlay absolute inset-0 opacity-60" />
+        <div className="dashboard-glow absolute inset-0" />
+        <div className="container relative mx-auto px-4">
           {statsLoading ? (
             <div className="text-center">
               <Terminal className="w-8 h-8 text-primary mx-auto animate-pulse" />
@@ -141,23 +146,28 @@ export default function Index() {
           ) : statsForDisplay.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {statsForDisplay.map((stat, index) => (
-                <StatCounter
-                  key={stat.label}
-                  end={stat.value}
-                  suffix={stat.suffix}
-                  label={stat.label}
-                  className="animate-fade-in"
-                />
+                <Reveal key={stat.label} delay={index * 90}>
+                  <div
+                    className={cn(
+                      "px-4",
+                      index > 0 && "md:border-l md:border-primary/[0.12]"
+                    )}
+                  >
+                    <StatCounter end={stat.value} suffix={stat.suffix} label={stat.label} />
+                  </div>
+                </Reveal>
               ))}
             </div>
           ) : null}
         </div>
       </section>
 
+      <CircuitDivider className="py-10 md:py-14" />
+
       {/* Features Section */}
-      <section className="section-shell">
+      <section className="section-shell !pt-0">
         <div className="container mx-auto">
-          <div className="text-center mb-16">
+          <Reveal className="text-center mb-16">
             <span className="section-kicker">
               <Zap className="h-3.5 w-3.5" />
               Operating domains
@@ -169,91 +179,101 @@ export default function Index() {
               Security is the edge, but the team's work spans software, AI,
               electronics, open-source contribution, and competition-grade builds.
             </p>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
-              <CyberCard
-                key={feature.title}
-                className="animate-fade-in h-full text-left transition-transform duration-300 hover:-translate-y-1"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="mb-5 h-12 w-12 relative">
-                  <div className="absolute inset-0 rounded-full bg-primary/15 blur-xl" />
-                  <div className="relative flex h-full w-full items-center justify-center border border-primary/[0.35] bg-background/60">
-                    <feature.icon className="h-6 w-6 text-primary" />
+              <Reveal key={feature.title} delay={index * 100}>
+                <CyberCard className="h-full text-left">
+                  <div className="mb-5 h-12 w-12 relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110">
+                    <div className="absolute inset-0 rounded-full bg-primary/15 blur-xl transition-opacity duration-300 group-hover:opacity-80" />
+                    <div className="relative flex h-full w-full items-center justify-center border border-primary/[0.35] bg-background/60 transition-colors duration-300 group-hover:border-primary/70">
+                      <feature.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:rotate-6" />
+                    </div>
                   </div>
-                </div>
-                <h3 className="mb-2 font-display text-lg font-bold text-foreground">
-                  {feature.title}
-                </h3>
-                <p className="text-sm leading-6 text-muted-foreground">
-                  {feature.description}
-                </p>
-              </CyberCard>
+                  <h3 className="mb-2 font-display text-lg font-bold text-foreground">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {feature.description}
+                  </p>
+                </CyberCard>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
+      <CircuitDivider className="py-10 md:py-14" />
+
       {/* Hexagon Showcase */}
-      <section className="section-shell overflow-hidden">
+      <section className="section-shell overflow-hidden !pt-0">
         <div className="container mx-auto">
-          <div className="text-center mb-16">
+          <Reveal className="text-center mb-16">
             <span className="section-kicker">Quick access</span>
             <h2 className="section-title">Explore the lab.</h2>
-          </div>
+          </Reveal>
 
           <div className="flex flex-wrap justify-center gap-8">
-            <Link to="/projects">
-              <HexagonCard className="w-48 h-56 flex items-center justify-center">
-                <div className="text-center">
-                  <Code className="w-12 h-12 text-primary mx-auto mb-3" />
-                  <span className="font-display font-semibold text-foreground">Projects</span>
-                </div>
-              </HexagonCard>
-            </Link>
-            <Link to="/achievements">
-              <HexagonCard className="w-48 h-56 flex items-center justify-center" glowColor="secondary">
-                <div className="text-center">
-                  <Trophy className="w-12 h-12 text-secondary mx-auto mb-3" />
-                  <span className="font-display font-semibold text-foreground">Achievements</span>
-                </div>
-              </HexagonCard>
-            </Link>
-            <Link to="/members">
-              <HexagonCard className="w-48 h-56 flex items-center justify-center">
-                <div className="text-center">
-                  <Users className="w-12 h-12 text-primary mx-auto mb-3" />
-                  <span className="font-display font-semibold text-foreground">Members</span>
-                </div>
-              </HexagonCard>
-            </Link>
+            <Reveal delay={0}>
+              <Link to="/projects">
+                <HexagonCard className="w-48 h-56 flex items-center justify-center">
+                  <div className="text-center">
+                    <Code className="w-12 h-12 text-primary mx-auto mb-3 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
+                    <span className="font-display font-semibold text-foreground">Projects</span>
+                  </div>
+                </HexagonCard>
+              </Link>
+            </Reveal>
+            <Reveal delay={100}>
+              <Link to="/achievements">
+                <HexagonCard className="w-48 h-56 flex items-center justify-center" glowColor="secondary">
+                  <div className="text-center">
+                    <Trophy className="w-12 h-12 text-secondary mx-auto mb-3 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
+                    <span className="font-display font-semibold text-foreground">Achievements</span>
+                  </div>
+                </HexagonCard>
+              </Link>
+            </Reveal>
+            <Reveal delay={200}>
+              <Link to="/members">
+                <HexagonCard className="w-48 h-56 flex items-center justify-center">
+                  <div className="text-center">
+                    <Users className="w-12 h-12 text-primary mx-auto mb-3 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
+                    <span className="font-display font-semibold text-foreground">Members</span>
+                  </div>
+                </HexagonCard>
+              </Link>
+            </Reveal>
           </div>
         </div>
       </section>
 
+      <CircuitDivider className="py-10 md:py-14" />
+
       {/* CTA Section */}
-      <section className="section-shell">
+      <section className="section-shell !pt-0">
         <div className="container mx-auto max-w-4xl">
-          <CyberCard variant="glow" className="p-8 text-center md:p-12">
-            <Zap className="mx-auto mb-6 h-14 w-14 text-primary animate-pulse-glow" />
-            <h2 className="font-display text-3xl font-black text-foreground md:text-4xl">
-              Competition pressure. Production discipline.
-            </h2>
-            <p className="mx-auto mb-8 mt-4 max-w-xl leading-7 text-muted-foreground">
-              Browse achievements from CTFs, hackathons, research, events, and
-              engineering milestones.
-            </p>
-            <div className="flex justify-center">
-              <Link to="/achievements" className="w-full sm:w-auto">
-                <Button variant="cyber" size="lg" className="w-full">
-                  <Trophy className="w-5 h-5 mr-2" />
-                  View Achievements
-                </Button>
-              </Link>
-            </div>
-          </CyberCard>
+          <Reveal>
+            <CyberCard variant="glow" className="p-8 text-center md:p-12">
+              <Zap className="mx-auto mb-6 h-14 w-14 text-primary animate-pulse-glow transition-transform duration-500 group-hover:scale-110" />
+              <h2 className="font-display text-3xl font-black text-foreground md:text-4xl">
+                Competition pressure. Production discipline.
+              </h2>
+              <p className="mx-auto mb-8 mt-4 max-w-xl leading-7 text-muted-foreground">
+                Browse achievements from CTFs, hackathons, research, events, and
+                engineering milestones.
+              </p>
+              <div className="flex justify-center">
+                <Link to="/achievements" className="w-full sm:w-auto">
+                  <Button variant="cyber" size="lg" className="w-full">
+                    <Trophy className="w-5 h-5 mr-2" />
+                    View Achievements
+                  </Button>
+                </Link>
+              </div>
+            </CyberCard>
+          </Reveal>
         </div>
       </section>
     </Layout>

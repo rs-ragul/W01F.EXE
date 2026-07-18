@@ -179,6 +179,66 @@
     @apply relative px-4 py-20 md:py-28;
   }
 
+  .dashboard-panel {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .dashboard-panel::before,
+  .dashboard-panel::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: min(94%, 1180px);
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.5) 22%,
+      hsl(var(--secondary) / 0.5) 78%,
+      transparent 100%
+    );
+  }
+
+  .dashboard-panel::before {
+    top: 0;
+  }
+
+  .dashboard-panel::after {
+    bottom: 0;
+  }
+
+  .dashboard-glow {
+    background:
+      radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.1), transparent 42%),
+      radial-gradient(circle at 82% 78%, hsl(var(--secondary) / 0.1), transparent 42%);
+  }
+
+  .border-shimmer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .border-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(110deg, transparent 0%, hsl(var(--foreground) / 0.16) 50%, transparent 100%);
+    transform: skewX(-18deg);
+    transition: left 0.85s ease;
+  }
+
+  .group:hover .border-shimmer::after,
+  .group\/btn:hover .border-shimmer::after {
+    left: 130%;
+  }
+
   .section-kicker {
     @apply inline-flex items-center gap-2 border border-primary/20 bg-card/60 px-3 py-1.5 text-xs font-semibold uppercase text-primary;
     border-radius: 999px;
@@ -257,14 +317,14 @@
   }
 
   .hero-eye-red {
-    left: 60.2%;
+    left: 63.2%;
     top: 45%;
     background: radial-gradient(circle, #FF3B30 0%, rgba(255, 59, 48, 0.78) 24%, transparent 68%);
     animation: wolf-eye-red-pulse 3.1s ease-in-out infinite, wolf-eye-blink 7.6s steps(1, end) infinite;
   }
 
   .hero-eye-blue {
-    left: 75.3%;
+    left: 75.9%;
     top: 45%;
     background: radial-gradient(circle, #29A9FF 0%, rgba(41, 169, 255, 0.8) 24%, transparent 70%);
     animation: wolf-eye-blue-pulse 3.4s ease-in-out infinite, wolf-eye-blink 8.3s steps(1, end) infinite;
