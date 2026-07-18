@@ -267,11 +267,11 @@
       /* Below the two-column breakpoint the layout stacks and the photo goes
          full-bleed behind the content, so re-anchor the crop toward the
          wolf's face instead of the desktop-tuned right edge. */
-      background-position: 82% center;
+      background-position: 79% center;
     }
 
     .hero-eye-red {
-      left: 35%;
+      left: 30%;
     }
 
     .hero-eye-blue {
@@ -338,8 +338,8 @@
   }
 
   .hero-eye-red {
-    left: 63%;
-    top: 45%;
+    left: 63.2%;
+    top: 44.8%;
     background: radial-gradient(circle, #FF3B30 0%, rgba(255, 59, 48, 0.78) 24%, transparent 68%);
     animation: wolf-eye-red-pulse 3.1s ease-in-out infinite, wolf-eye-blink 7.6s steps(1, end) infinite;
   }
