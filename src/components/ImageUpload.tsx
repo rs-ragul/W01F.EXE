@@ -75,10 +75,11 @@ export function ImageUpload({
         title: "Success",
         description: "Image uploaded successfully",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Unable to upload image";
       toast({
         title: "Upload failed",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     } finally {

@@ -255,7 +255,7 @@ export function AdminMembersPanel() {
                   type="email"
                   value={newMember.email}
                   onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-                  placeholder="member@zerodaysquad.com"
+                  placeholder="member@w0lf.exe"
                 />
               </div>
               <div>

@@ -17,8 +17,9 @@ export function CyberCard({
   return (
     <div
       className={cn(
-        "relative bg-card/80 backdrop-blur-sm p-6 transition-all duration-300",
-        "border border-primary/30 hover:border-primary/60",
+        "relative bg-card/70 backdrop-blur-sm p-6 transition-all duration-300",
+        "border border-primary/20 hover:border-primary/[0.45]",
+        "shadow-[0_18px_70px_hsl(220_42%_2%/0.32)] hover:shadow-[0_22px_90px_hsl(220_42%_2%/0.45)]",
         variant === "glow" && "cyber-glow",
         variant === "terminal" && "font-mono",
         className
@@ -30,10 +31,10 @@ export function CyberCard({
       }}
     >
       {/* Corner decorations */}
-      <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-primary/60" />
-      <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-primary/60" />
-      <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-primary/60" />
-      <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-primary/60" />
+      <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-primary/[0.55]" />
+      <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-primary/[0.55]" />
+      <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-primary/[0.55]" />
+      <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-primary/[0.55]" />
 
       {variant === "terminal" && (
         <div className="absolute top-2 left-4 flex gap-1.5">

@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /auth
 
-Sitemap: https://zero-day-squad-web.vercel.app/sitemap.xml
+Sitemap: https://w01fexe.vercel.app/sitemap.xml

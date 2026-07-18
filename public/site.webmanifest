@@ -1,19 +1,27 @@
 {
-  "name": "ZeroDay Squad",
-  "short_name": "ZeroDay",
+  "name": "w0lf.exe Cybersecurity Team",
+  "short_name": "w0lf.exe",
+  "description": "Cybersecurity team focused on CTFs, red team, blue team, reverse engineering, forensics, and open-source security.",
   "icons": [
     {
-      "src": "/android-chrome-192x192.png",
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/android-chrome-512x512.png",
+      "src": "/favicon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "theme_color": "#0a0f14",
-  "background_color": "#0a0f14",
-  "display": "standalone"
+  "theme_color": "#05080d",
+  "background_color": "#05080d",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
 }

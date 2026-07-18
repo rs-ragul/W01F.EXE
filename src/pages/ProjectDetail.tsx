@@ -95,6 +95,7 @@ export default function ProjectDetail() {
               <img
                 src={project.image_url}
                 alt={project.title}
+                loading="lazy"
                 className="w-full h-64 md:h-96 object-cover"
               />
             </div>
@@ -190,6 +191,7 @@ export default function ProjectDetail() {
                           <img
                             src={member.avatar_url}
                             alt={member.username || "Member"}
+                            loading="lazy"
                             className="w-5 h-5 rounded-full"
                           />
                         ) : (
@@ -219,6 +221,7 @@ export default function ProjectDetail() {
                         <img
                           src={project.owner.avatar_url}
                           alt={project.owner.username || "Owner"}
+                          loading="lazy"
                           className="w-5 h-5 rounded-full"
                         />
                       ) : (
@@ -254,7 +257,7 @@ export default function ProjectDetail() {
                 >
                   <Button variant="cyber-secondary">
                     <ExternalLink className="w-4 h-4 mr-2" />
-                    Live Demo
+                    Live Project
                   </Button>
                 </a>
               )}

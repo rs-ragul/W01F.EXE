@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { SeoManager } from "@/components/seo/SeoManager";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Projects from "./pages/Projects";
@@ -25,6 +26,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <SeoManager />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -36,7 +38,6 @@ const App = () => (
             <Route path="/member/:id" element={<MemberProfile />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/dashboard" element={<MemberDashboard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

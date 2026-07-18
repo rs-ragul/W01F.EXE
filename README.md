@@ -1,109 +1,47 @@
-ZeroDay Squad
-URL : https://zero-day-squad-web.vercel.app/
+w0lf.exe
 
-A cybersecurity-focused web platform to showcase projects, achievements, and team member profiles — built with a modern, secure, and scalable stack.
+URL: https://w01fexe.vercel.app/
 
-“We find flaws before they become threats.”
+w0lf.exe is the public website for the w0lf.exe Cybersecurity Team. It presents the team’s security research, Capture The Flag work, red team and blue team practice, reverse engineering, digital forensics, exploit development, and open-source security projects.
 
-🚀 Project Overview
+## Core Areas
 
-ZeroDay Squad is designed for cybersecurity teams to:
+- Cybersecurity research
+- CTF and capture the flag competitions
+- Red team and blue team operations
+- Reverse engineering
+- Digital forensics
+- Exploit development
+- Bug bounty and secure engineering
+- Open-source security tooling
 
-Publish individual and team projects
+## Application
 
-Track achievements (CTFs, certifications, research, etc.)
+Public visitors can browse projects, achievements, and member profiles. Members can manage their own work, and admins can manage team content, roles, projects, achievements, and site statistics.
 
-Maintain public member profiles
+## Local Development
 
-Enforce role-based access (Admin / Member)
+Requirements:
 
-Provide a clean, premium, cyber-themed UI
+- Node.js 18 or newer
+- npm
 
-🛠️ Tech Stack
+Commands:
 
-Vite – Fast frontend tooling
-
-React + TypeScript – UI and type safety
-
-Tailwind CSS – Styling
-
-shadcn/ui – Component system
-
-Supabase – Authentication, database, storage
-
-React Query – Data fetching & caching
-
-React Router – Client-side routing
-
-📂 Project Setup (Local Development)
-Prerequisites
-
-Node.js (v18+ recommended)
-
-npm
-(You can install Node using nvm if needed)
-
-Steps
-# Clone the repository
-git clone <YOUR_GIT_URL>
-
-# Navigate into the project
-cd zeroday-hub
-
-# Install dependencies
+```bash
 npm install
-
-# Start development server
 npm run dev
-
-
-The app will be available at:
-
-http://localhost:5173
-
-🔐 Authentication & Roles
-
-Public users: View projects, achievements, and profiles
-
-Members: Manage their own projects and achievements
-
-Admins: Full control over members, projects, achievements, and site stats
-
-User roles and permissions are enforced using Supabase Row Level Security (RLS).
-
-🧩 Project Structure
-
-pages/ – Route-based pages (Projects, Achievements, Profiles, Dashboards)
-
-components/ – Reusable UI components
-
-hooks/ – Data-fetching and logic hooks
-
-lib/ – Utilities and Supabase client
-
-public/ – Static assets (favicon, images)
-
-📦 Build for Production
 npm run build
+```
 
+Production files are generated in `dist/`.
 
-The production-ready files will be generated in the dist/ folder.
+## Deployment
 
-🌐 Deployment
+The production site is deployed at:
 
-You can deploy the dist folder to any static hosting provider, such as:
+https://w01fexe.vercel.app/
 
-Vercel (recommended)
+## License
 
-Netlify
-
-Cloudflare Pages
-
-GitHub Pages
-
-HTTPS and custom domains are supported by most providers.
-
-📄 License
-
-This project is private to ZeroDay Squad.
-All rights reserved.
+Private project for the w0lf.exe Cybersecurity Team. All rights reserved.

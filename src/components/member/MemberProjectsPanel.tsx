@@ -223,7 +223,7 @@ export function MemberProjectsPanel({ profileId }: MemberProjectsPanelProps) {
                   />
                 </div>
                 <div>
-                  <Label>Demo URL</Label>
+                  <Label>Live URL</Label>
                   <Input
                     value={formData.demo_url}
                     onChange={(e) => setFormData({ ...formData, demo_url: e.target.value })}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Terminal, LogOut, User, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ const navLinks = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, role, signOut } = useAuth();
@@ -29,22 +30,36 @@ export function Navbar() {
     return "/dashboard";
   };
 
+  useEffect(() => {
+    const onScroll = () => setHasScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-primary/20">
+    <nav
+      className={cn(
+        "fixed left-0 right-0 top-0 z-50 border-b transition-all duration-500",
+        hasScrolled
+          ? "border-primary/20 bg-background/80 shadow-[0_18px_80px_hsl(220_40%_2%/0.45)] backdrop-blur-xl"
+          : "border-transparent bg-background/[0.45] backdrop-blur-md"
+      )}
+    >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative">
+          <Link to="/" className="group flex items-center gap-3" aria-label="w0lf.exe home">
+            <div className="relative flex h-14 w-12 items-center justify-center">
+              <div className="absolute inset-0 bg-primary/[0.18] blur-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               <img
-                src="/logo.png"
-                alt="ZeroDay Squad logo"
-                className="w-9 h-9 object-contain group-hover:animate-pulse-glow transition-all duration-300"
+                src="/wolf-logo-transparent.png"
+                alt="w0lf.exe wolf logo"
+                className="relative h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
-            <span className="font-display text-lg font-bold text-primary cyber-text-glow">
-              ZeroDay<span className="text-secondary">Squad</span>
+            <span className="font-display text-lg font-black text-foreground">
+              w0lf<span className="text-primary">.exe</span>
             </span>
           </Link>
 
@@ -55,15 +70,15 @@ export function Navbar() {
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  "px-4 py-2 text-sm font-mono uppercase tracking-wider transition-all duration-300 relative",
+                  "relative px-4 py-2 text-sm font-semibold uppercase tracking-normal transition-all duration-300",
                   location.pathname === link.href
-                    ? "text-primary cyber-text-glow"
-                    : "text-muted-foreground hover:text-primary"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {link.label}
                 {location.pathname === link.href && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary cyber-glow" />
+                  <span className="absolute inset-x-3 bottom-0 h-0.5 bg-primary shadow-[0_0_22px_hsl(var(--primary)/0.55)]" />
                 )}
               </Link>
             ))}
@@ -101,6 +116,7 @@ export function Navbar() {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
+            aria-label="Toggle navigation menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -116,7 +132,7 @@ export function Navbar() {
                   to={link.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "px-4 py-3 text-sm font-mono uppercase tracking-wider transition-all duration-300",
+                    "px-4 py-3 text-sm font-semibold uppercase tracking-normal transition-all duration-300",
                     location.pathname === link.href
                       ? "text-primary bg-primary/10 cyber-border"
                       : "text-muted-foreground hover:text-primary hover:bg-muted"

@@ -23,17 +23,12 @@ export function useProfilesWithRoles() {
   return useQuery({
     queryKey: ["profiles-with-roles"],
     queryFn: async () => {
-      // Try to get profiles with roles using the database function
       const { data, error } = await supabase.rpc("get_profiles_with_roles");
       
-      // If RPC succeeds, return the data with roles
       if (!error && data) {
         return data as ProfileWithRole[];
       }
       
-      // Fallback: If RPC fails (function not yet deployed, etc.), 
-      // fetch profiles directly and default all roles to "member"
-      console.warn("get_profiles_with_roles RPC failed, falling back to profiles table:", error);
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
         .select("id,user_id,username,full_name,avatar_url,bio,skills,github_url,linkedin_url,website_url,department,team_role,created_at,updated_at")
@@ -41,7 +36,6 @@ export function useProfilesWithRoles() {
       
       if (profilesError) throw profilesError;
       
-      // Map profiles to include default role
       return (profiles || []).map(profile => ({
         ...profile,
         role: "member" as const

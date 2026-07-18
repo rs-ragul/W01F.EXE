@@ -96,7 +96,7 @@ export default function AdminDashboard() {
                 />
               </div>
               <p className="text-muted-foreground font-mono text-sm">
-                <span className="text-secondary">$</span> root@zerodaysquad ~# sudo access granted
+                <span className="text-secondary">$</span> root@w0lf.exe ~# sudo access granted
               </p>
             </div>
             <div className="flex gap-2 mt-4 md:mt-0">

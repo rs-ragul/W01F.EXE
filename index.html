@@ -1,67 +1,86 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- ================= BASIC ================= -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="google-site-verification" content="MQZpWSAywhPvhRlBFuNZGtZdWzORx4yk8ZEl6EGkx68" />
-    <title>ZeroDay Squad | Cybersecurity Team Portfolio — Projects, CTFs & Hackathons</title>
+    <title>w0lf.exe | Cybersecurity • CTF • Red Team • Blue Team</title>
 
     <meta
       name="description"
-      content="ZeroDay Squad is a cybersecurity-first team portfolio showcasing projects, achievements, CTFs, hackathons, and events."
+      content="w0lf.exe is a cybersecurity team focused on CTFs, red team, blue team, security research, reverse engineering, forensics, and open-source security."
     />
 
     <meta name="robots" content="index, follow" />
-    <meta name="author" content="ZeroDay Squad" />
+    <meta name="author" content="w0lf.exe Cybersecurity Team" />
+    <meta
+      name="keywords"
+      content="cybersecurity, ethical hacking, CTF, capture the flag, red team, blue team, penetration testing, reverse engineering, digital forensics, security research, bug bounty, exploit development, OWASP, network security, malware analysis, Linux, open source, w0lf.exe"
+    />
+    <meta name="theme-color" content="#05080d" />
+    <meta name="color-scheme" content="dark" />
 
-    <!-- ================= FAVICON ================= -->
-    <link rel="icon" type="image/x-icon" href="/zerodaysquad.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/mask-icon.svg" color="#29a9ff" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- ================= OPEN GRAPH (GOOGLE / FB / LINKEDIN) ================= -->
-    <meta property="og:title" content="ZeroDay Squad" />
+    <meta property="og:title" content="w0lf.exe | Cybersecurity • CTF • Red Team • Blue Team" />
     <meta
       property="og:description"
-      content="A cybersecurity-first team portfolio with projects, achievements, CTFs, hackathons, and events."
+      content="w0lf.exe is a cybersecurity team focused on CTFs, red team, blue team, security research, reverse engineering, forensics, and open-source security."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://zero-day-squad-web.vercel.app/" />
-    <meta property="og:image" content="/zerodaysquad.ico" />
+    <meta property="og:url" content="https://w01fexe.vercel.app/" />
+    <meta property="og:site_name" content="w0lf.exe" />
+    <meta property="og:image" content="https://w01fexe.vercel.app/social-preview.png" />
+    <meta property="og:image:alt" content="w0lf.exe cyber wolf brand artwork" />
 
-    <!-- ================= TWITTER ================= -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="ZeroDay Squad" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="w0lf.exe | Cybersecurity • CTF • Red Team • Blue Team" />
     <meta
       name="twitter:description"
-      content="Cybersecurity-first team portfolio featuring projects, CTFs, hackathons, and events."
+      content="w0lf.exe is a cybersecurity team focused on CTFs, red team, blue team, security research, reverse engineering, forensics, and open-source security."
     />
-    <meta
-      name="keywords"
-      content="cybersecurity team portfolio, projects, achievements, CTF, hackathons, events, competitions, research"
-    />
+    <meta name="twitter:image" content="https://w01fexe.vercel.app/social-preview.png" />
+    <meta name="twitter:creator" content="@w0lfexe" />
 
-    <!-- ================= PERFORMANCE ================= -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="canonical" href="https://zero-day-squad-web.vercel.app/" />
+    <link rel="preload" as="image" href="/hero-wolf-bg.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/wolf-logo-transparent.png" />
+    <link rel="canonical" href="https://w01fexe.vercel.app/" />
 
-    <!-- ================= SECURITY ================= -->
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
+    <script id="organization-schema" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "w0lf.exe Cybersecurity Team",
+        "url": "https://w01fexe.vercel.app",
+        "logo": "https://w01fexe.vercel.app/favicon-512x512.png",
+        "sameAs": [
+          "https://github.com/w0lfexe",
+          "https://www.linkedin.com/company/w0lfexe",
+          "https://x.com/w0lfexe"
+        ],
+        "description": "w0lf.exe is a cybersecurity team focused on CTFs, red team, blue team, security research, reverse engineering, forensics, and open-source security.",
+        "keywords": "cybersecurity, ethical hacking, CTF, capture the flag, red team, blue team, penetration testing, reverse engineering, digital forensics, security research, bug bounty, exploit development, OWASP, network security, malware analysis, Linux, open source, w0lf.exe"
+      }
+    </script>
   </head>
 
   <body>
     <noscript>
-      ZeroDay Squad requires JavaScript to run properly.
+      w0lf.exe requires JavaScript to run properly.
     </noscript>
 
     <div id="root"></div>
 
-    <!-- Vite entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

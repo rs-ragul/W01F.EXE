@@ -30,27 +30,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", userId);
 
       if (error) {
-        console.error("Error fetching role:", error);
         return null;
       }
       if (!data || data.length === 0) return null;
       const roles = data.map((r) => r.role) as AppRole[];
       if (roles.includes("admin")) return "admin";
       return roles[0] || null;
-    } catch (err) {
-      console.error("Error in fetchUserRole:", err);
+    } catch {
       return null;
     }
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Defer role fetch with setTimeout to prevent deadlock
         if (session?.user) {
           setTimeout(() => {
             fetchUserRole(session.user.id).then(setRole);
@@ -61,7 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);

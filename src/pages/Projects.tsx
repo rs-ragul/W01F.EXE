@@ -74,6 +74,7 @@ export default function Projects() {
                         href={project.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`Open ${project.title} on GitHub`}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />

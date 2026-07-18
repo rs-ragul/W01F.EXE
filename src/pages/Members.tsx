@@ -37,14 +37,14 @@ export default function Members() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 border border-primary/30 rounded-full mb-6">
               <Users className="w-4 h-4 text-primary" />
               <span className="text-sm font-mono text-muted-foreground">
-                The Squad
+                The Team
               </span>
             </div>
             <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
               <span className="text-primary">@</span> Members
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Meet the elite operatives securing the digital frontier
+              Meet the security researchers behind w0lf.exe.
             </p>
           </div>
 
@@ -108,6 +108,7 @@ export default function Members() {
                             <img
                               src={member.avatar_url}
                               alt={member.username || "Member"}
+                              loading="lazy"
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -168,6 +169,7 @@ export default function Members() {
                             href={member.github_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            aria-label={`Open ${member.username || "member"} GitHub profile`}
                             className="text-muted-foreground hover:text-primary transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -179,6 +181,7 @@ export default function Members() {
                             href={member.linkedin_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            aria-label={`Open ${member.username || "member"} LinkedIn profile`}
                             className="text-muted-foreground hover:text-primary transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -190,6 +193,7 @@ export default function Members() {
                             href={member.website_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            aria-label={`Open ${member.username || "member"} website`}
                             className="text-muted-foreground hover:text-primary transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >

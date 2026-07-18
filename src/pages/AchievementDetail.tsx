@@ -126,6 +126,7 @@ export default function AchievementDetail() {
               <img
                 src={achievement.image_url}
                 alt={achievement.title}
+                loading="lazy"
                 className="w-full h-64 md:h-96 object-cover"
               />
             </div>
@@ -204,6 +205,7 @@ export default function AchievementDetail() {
                           <img
                             src={member.avatar_url}
                             alt={member.username || "Member"}
+                            loading="lazy"
                             className="w-6 h-6 rounded-full"
                           />
                         ) : (
@@ -233,6 +235,7 @@ export default function AchievementDetail() {
                         <img
                           src={achievement.owner.avatar_url}
                           alt={achievement.owner.username || "Owner"}
+                          loading="lazy"
                           className="w-6 h-6 rounded-full"
                         />
                       ) : (

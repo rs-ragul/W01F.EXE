@@ -5,7 +5,7 @@ import { CyberCard } from "@/components/cyber/CyberCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, Terminal, Lock, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Terminal, Lock, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
@@ -98,14 +98,16 @@ export default function Auth() {
           <CyberCard variant="terminal" className="p-8">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto mb-4 relative">
-                <div className="absolute inset-0 bg-primary/30 blur-xl rounded-full animate-pulse" />
-                <div className="relative w-full h-full flex items-center justify-center border-2 border-primary rounded-lg cyber-glow">
-                  <Shield className="w-8 h-8 text-primary" />
-                </div>
+              <div className="relative mx-auto mb-4 h-20 w-20">
+                <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl animate-pulse" />
+                <img
+                  src="/wolf-logo-transparent.png"
+                  alt="w0lf.exe wolf logo"
+                  className="relative h-full w-full object-contain"
+                />
               </div>
               <h1 className="font-display text-2xl font-bold text-foreground mb-2">
-                Access Terminal
+                w0lf.exe Access
               </h1>
               <p className="text-muted-foreground text-sm font-mono">
                 &gt; authenticate credentials
@@ -122,7 +124,7 @@ export default function Auth() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="operative@zerodaysquad.com"
+                  placeholder="member@w0lf.exe"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
