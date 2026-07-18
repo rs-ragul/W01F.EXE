@@ -62,12 +62,18 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative flex min-h-[calc(100vh-4rem)] items-center overflow-hidden px-4 py-16 md:py-24">
+      <section className="relative flex min-h-[640px] items-center overflow-hidden px-4 py-16 md:min-h-[calc(100vh-4rem)] md:py-24">
         <div className="hero-home-bg absolute inset-0" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(220_24%_5%/0.94)_0%,hsl(220_24%_5%/0.78)_34%,hsl(220_24%_5%/0.2)_62%,transparent_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_44%,hsl(var(--primary)/0.08),transparent_38%)]" />
         <div className="hero-wolf-activity pointer-events-none absolute inset-0">
-          <svg className="hero-flow-lines absolute inset-0 h-full w-full" viewBox="0 0 1600 900" fill="none" aria-hidden="true">
+          <svg
+            className="hero-flow-lines absolute inset-0 h-full w-full"
+            viewBox="0 0 1600 900"
+            preserveAspectRatio="xMidYMid slice"
+            fill="none"
+            aria-hidden="true"
+          >
             <g className="hero-flow hero-flow-red" strokeLinecap="round" strokeLinejoin="round">
               <path d="M780 456H646l-48-48H492" />
               <path d="M792 548H646l-56 56H474" />
@@ -214,33 +220,33 @@ export default function Index() {
             <h2 className="section-title">Explore the lab.</h2>
           </Reveal>
 
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap justify-center gap-5 sm:gap-6 md:gap-8">
             <Reveal delay={0}>
               <Link to="/projects">
-                <HexagonCard className="w-48 h-56 flex items-center justify-center">
+                <HexagonCard className="flex h-40 w-32 items-center justify-center sm:h-48 sm:w-40 md:h-56 md:w-48">
                   <div className="text-center">
-                    <Code className="w-12 h-12 text-primary mx-auto mb-3 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
-                    <span className="font-display font-semibold text-foreground">Projects</span>
+                    <Code className="mx-auto mb-2 h-8 w-8 text-primary transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10 md:h-12 md:w-12" />
+                    <span className="font-display text-sm font-semibold text-foreground sm:text-base">Projects</span>
                   </div>
                 </HexagonCard>
               </Link>
             </Reveal>
             <Reveal delay={100}>
               <Link to="/achievements">
-                <HexagonCard className="w-48 h-56 flex items-center justify-center" glowColor="secondary">
+                <HexagonCard className="flex h-40 w-32 items-center justify-center sm:h-48 sm:w-40 md:h-56 md:w-48" glowColor="secondary">
                   <div className="text-center">
-                    <Trophy className="w-12 h-12 text-secondary mx-auto mb-3 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
-                    <span className="font-display font-semibold text-foreground">Achievements</span>
+                    <Trophy className="mx-auto mb-2 h-8 w-8 text-secondary transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10 md:h-12 md:w-12" />
+                    <span className="font-display text-sm font-semibold text-foreground sm:text-base">Achievements</span>
                   </div>
                 </HexagonCard>
               </Link>
             </Reveal>
             <Reveal delay={200}>
               <Link to="/members">
-                <HexagonCard className="w-48 h-56 flex items-center justify-center">
+                <HexagonCard className="flex h-40 w-32 items-center justify-center sm:h-48 sm:w-40 md:h-56 md:w-48">
                   <div className="text-center">
-                    <Users className="w-12 h-12 text-primary mx-auto mb-3 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" />
-                    <span className="font-display font-semibold text-foreground">Members</span>
+                    <Users className="mx-auto mb-2 h-8 w-8 text-primary transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10 md:h-12 md:w-12" />
+                    <span className="font-display text-sm font-semibold text-foreground sm:text-base">Members</span>
                   </div>
                 </HexagonCard>
               </Link>
