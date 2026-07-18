@@ -267,7 +267,7 @@
       /* Below the two-column breakpoint the layout stacks and the photo goes
          full-bleed behind the content, so re-anchor the crop toward the
          wolf's face instead of the desktop-tuned right edge. */
-      background-position: 80% center;
+      background-position: 81% center;
     }
 
     .hero-eye-red {
