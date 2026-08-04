@@ -3,12 +3,12 @@ import { useLocation } from "react-router-dom";
 
 const SITE_URL = "https://w01fexe.vercel.app";
 const SITE_NAME = "w0lf.exe";
-const ORGANIZATION_NAME = "w0lf.exe Cybersecurity Team";
-const DEFAULT_TITLE = "w0lf.exe | CTF • Red Team • Blue Team";
+const ORGANIZATION_NAME = "w0lf.exe";
+const DEFAULT_TITLE = "w0lf.exe | Engineering • Cybersecurity • Hackathons • Tech Events";
 const DEFAULT_DESCRIPTION =
-  "w0lf.exe is a cybersecurity team focused on CTFs, red team, blue team, security research, reverse engineering, forensics, and open-source security.";
+  "w0lf.exe is a multidisciplinary team exploring cybersecurity, engineering, hackathons, software development, research, and hands-on innovation.";
 const KEYWORDS =
-  "cybersecurity, ethical hacking, CTF, capture the flag, red team, blue team, penetration testing, reverse engineering, digital forensics, security research, bug bounty, exploit development, OWASP, network security, malware analysis, Linux, open source, w0lf.exe";
+  "cybersecurity, engineering, hackathons, tech events, software development, CTF, capture the flag, red team, blue team, penetration testing, reverse engineering, digital forensics, security research, bug bounty, exploit development, open source, innovation, w0lf.exe";
 const SOCIAL_IMAGE = `${SITE_URL}/social-preview.png`;
 const LOGO_URL = `${SITE_URL}/favicon-512x512.png`;
 
@@ -18,19 +18,19 @@ const routeMeta: Record<string, { title: string; description: string }> = {
     description: DEFAULT_DESCRIPTION,
   },
   "/projects": {
-    title: "Projects | w0lf.exe Cybersecurity Team",
+    title: "Projects | w0lf.exe",
     description:
-      "Explore w0lf.exe cybersecurity projects, CTF tooling, exploit development, reverse engineering, digital forensics, and open-source security work.",
+      "Explore w0lf.exe projects spanning cybersecurity, engineering, software development, research, hackathons, and technical experimentation.",
   },
   "/achievements": {
-    title: "Achievements | w0lf.exe CTF Team",
+    title: "Achievements | w0lf.exe",
     description:
-      "Track w0lf.exe achievements across Capture The Flag events, hackathons, security research, bug bounty work, and engineering competitions.",
+      "Track w0lf.exe achievements across CTFs, hackathons, tech events, security research, and engineering competitions.",
   },
   "/members": {
-    title: "Members | w0lf.exe Security Researchers",
+    title: "Members | w0lf.exe",
     description:
-      "Meet the w0lf.exe Cybersecurity Team members working on red team, blue team, reverse engineering, digital forensics, and open-source security.",
+      "Meet the builders, researchers, and problem-solvers behind w0lf.exe.",
   },
   "/auth": {
     title: "Member Login | w0lf.exe",
@@ -86,6 +86,8 @@ export function SeoManager() {
       ],
       description: DEFAULT_DESCRIPTION,
       keywords: KEYWORDS,
+      additionalType: "Organization",
+      slogan: "Building, researching, and competing across engineering and cybersecurity.",
     };
 
     const schemaNode = document.getElementById("organization-schema");
