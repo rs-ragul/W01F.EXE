@@ -1,131 +1,93 @@
-# w0lf.exe
+# w0lf.exe — Next-Gen Tactical Cybersecurity & Systems Lab
 
-Live site: https://w01fexe.vercel.app/
+> **Live Preview & Production Hub**: [w01fexe.vercel.app](https://w01fexe.vercel.app/)  
+> **Affiliations**: PSNA College of Engineering and Technology • TamilCTF • WiCyS • IEEE KPRIET  
+> **Championship Record**: 🥇 1st Place $N1PH€RS 3.0 International CTF • 🥇 1st Place EXPLOIT-X National CTF
 
-w0lf.exe is the public-facing website for the w0lf.exe community of builders, researchers, and problem-solvers. While cybersecurity remains a core strength, the team also works across engineering, software development, hackathons, tech events, experimentation, and collaborative innovation.
+---
 
-## Overview
+## ⚡ Complete Visual, Architectural & Motion Upgrade
 
-The platform is designed for three primary audiences:
+This major overhaul elevates the **w0lf.exe** platform into an award-winning, high-tactical cyber experience while maintaining 100% backend integrity with Supabase.
 
-- Public visitors who want to explore the team’s work, accomplishments, and expertise across security, engineering, hackathons, and tech events
-- Team members who can manage their own profile, projects, and achievements
-- Administrators who can manage site content, team members, and platform statistics
+### 🐺 Core Upgrades & New Features
 
-The website blends a modern showcase experience with a lightweight internal CMS experience backed by Supabase.
+1. **Procedural Web Audio Engine (`src/lib/cyberAudio.ts`)**
+   - 100% zero-dependency synthesizer built natively on the browser's **Web Audio API**.
+   - Procedural cyber tones: subtle radar pings, hover frequencies, mechanical key clicks, terminal execution tones, and championship fanfares.
+   - Global sound toggle with live pulsing audio waveform visualizer in the navbar.
 
-## What the website includes
+2. **Interactive 60fps Neural Particle Canvas (`CyberCanvas.tsx`)**
+   - High-performance, battery-friendly constellation canvas reacting to cursor position, magnetic attraction, and click shockwaves.
+   - Automatically throttles on mobile devices and pauses during tab dormancy.
 
-### Public experience
-- Animated home page with a cyber-themed hero section and feature highlights
-- Project showcase with project cards, tags, languages, statuses, and repository links
-- Achievement gallery for CTFs, hackathons, tech events, recognitions, certifications, and engineering milestones
-- Team directory with member profiles, roles, departments, skills, and social links
-- Dedicated detail pages for individual projects and achievements
-- SEO metadata, social sharing tags, and Vercel Speed Insights integration
+3. **Championship Hall of Fame & Trophy Podium (`TrophyShowcase.tsx`)**
+   - Dedicated celebration for crowning victories:
+     - **🥇 1st Place — $N1PH€RS 3.0 International CTF (2026)** (TamilCTF, St. Joseph's, WiCyS, Ex0rcists).
+     - **🥇 1st Place — EXPLOIT-X E2 National CTF (2026)** (IEEE KPRIET).
+     - **⭐ Best Idea Award — Startup Idea Pitch Fest (2026)** (Belora Lost & Found).
+   - Interactive celebratory confetti burst (`canvas-confetti`) with audio fanfare on interaction.
 
-### Member experience
-- Secure authentication flow via Supabase Auth
-- Personal dashboard for managing projects and achievements
-- Profile editing with avatar support and role/department information
-- Access to member-specific content tied to their account
+4. **Live Interactive Tactical Console CLI (`CyberTerminal.tsx`)**
+   - Fully interactive in-browser hacker terminal available on the homepage and via a global floating HUD modal.
+   - Built-in commands: `help`, `projects`, `wins`, `team`, `skills`, `stats`, `whoami`, `audio`, `banner`, `clear`, `contact`.
+   - Autocomplete suggestion chips for frictionless mobile usage.
 
-### Admin experience
-- Admin dashboard with tabs for managing members, projects, achievements, and site stats
-- Ability to create, update, and delete team content
-- Member onboarding support through the admin panel
-- Control over featured achievements and site-wide statistics
+5. **Specialized Operating Domains Bento Grid (`DomainsBento.tsx`)**
+   - Mathematically gapless interlocking grid (`grid-flow-dense`) showcasing:
+     - *Offensive CTF Warfare & Zero-Day Exploit Development*
+     - *High-Performance Systems & Production Builds (Rust, Kotlin, Next.js)*
+     - *AI, OCR & Computer Vision Lab (GPAlytics)*
+     - *Rapid Prototyping & Technical Hackathons*
 
-## Core feature areas
+6. **Combat Disciplines & Skills Matrix (`SkillsMatrix.tsx`)**
+   - Deep dive into offensive security, full-stack systems engineering, and defensive blue-team tooling.
+   - Categorized tabs with animated cyber progress meters and verified toolkits (Ghidra, Burp Suite, Volatility, Rust, Kotlin).
 
-- Cybersecurity research and engineering showcases
-- Capture The Flag and competitive challenge achievements
-- Hackathons, tech events, and innovation-driven collaboration
-- Red team / blue team practice and security operations
-- Reverse engineering, software development, and technical experimentation
-- Open-source tooling, research projects, and community-driven builds
-- Team member profiles and cross-linking between projects, achievements, and people
+7. **Mobile-First Tactical Bottom Dock (`MobileBottomDock.tsx`)**
+   - Pinned thumb-friendly mobile dock providing 1-tap navigation between Home, Projects, Wins, Team, and the instant CLI Terminal.
+   - Fully tested for responsive fluid typography (`clamp(...)`) with zero horizontal overflow on iOS and Android.
 
-## Tech stack
+8. **Refined Operative Dossiers & Project Blueprints**
+   - Upgraded `/projects` with instant fuzzy search, tag filtering, and view mode switching (Grid vs Matrix Table).
+   - Upgraded `/members` with 3D holographic agent cards, clear rank hierarchies, and direct dossier links.
+   - Upgraded `/achievements` with timeline milestones, verified prize telemetry, and credential details.
 
-- React 18 with TypeScript
-- Vite for development and production builds
-- React Router for client-side navigation
-- Tailwind CSS for styling
-- Radix UI + custom UI primitives for accessible components
-- TanStack React Query for data fetching and caching
-- Supabase for authentication, database, and realtime-style content management
-- Vercel for hosting and deployment
+---
 
-## Project structure
+## 🛠️ Tech Stack
 
-- src/pages – public pages, auth, dashboards, and detail views
-- src/components – reusable UI, layout, and cyber-themed presentation components
-- src/hooks – Supabase-backed hooks for projects, achievements, profiles, auth, and stats
-- src/integrations/supabase – Supabase client and generated type definitions
-- supabase – database config, migrations, and server-side functions
+- **Frontend Core**: React 18, TypeScript, Vite 5
+- **Styling**: Tailwind CSS, Syne, JetBrains Mono, Plus Jakarta Sans, Space Grotesk
+- **Audio & FX**: Web Audio API Synthesizer, Canvas Confetti, GSAP Animations
+- **Backend & Database**: Supabase (PostgreSQL, Row Level Security, Auth, Storage)
+- **Deployment**: Vercel
 
-## Prerequisites
+---
 
-- Node.js 18 or newer
-- npm
-- A Supabase project with the required environment variables configured
-
-## Environment variables
-
-Create a local .env file in the project root with:
-
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
-```
-
-These values are required for authentication and content loading.
-
-## Local development
-
-Install dependencies:
+## 🚀 How to Run Locally
 
 ```bash
+# 1. Clone repository
+git clone https://github.com/rs-ragul/W01F.EXE.git
+cd W01F.EXE
+
+# 2. Configure environment
+cp .env.example .env
+# Fill in VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY
+
+# 3. Install dependencies
 npm install
-```
 
-Start the development server:
-
-```bash
+# 4. Start local development server
 npm run dev
-```
 
-Build for production:
-
-```bash
+# 5. Build for production
 npm run build
 ```
 
-The production build is output to the dist folder.
+---
 
-## Deployment
+## 🔒 Confidentiality & License
 
-The site is deployed on Vercel and can be configured with the same environment variables used locally.
-
-Recommended deployment steps:
-
-1. Connect the repository to Vercel
-2. Set the Supabase environment variables in Vercel project settings
-3. Deploy the project
-
-## Database/content model
-
-The app relies on Supabase tables and related content such as:
-
-- profiles
-- projects
-- achievements
-- site_stats
-- user_roles
-
-These drive the public pages as well as the admin and member dashboards.
-
-## License
-
-This is a private project for the w0lf.exe Cybersecurity Team. All rights reserved.
+Private repository for the **w0lf.exe Cybersecurity Collective**. All rights reserved.

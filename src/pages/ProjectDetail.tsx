@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { CyberCard } from "@/components/cyber/CyberCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useProjects } from "@/hooks/useProjects";
@@ -14,39 +13,43 @@ import {
   Users,
   ArrowLeft,
   Calendar,
+  Copy,
+  Check,
+  Shield,
+  Layers,
+  Sparkles,
 } from "lucide-react";
+import { useState } from "react";
+import { cyberAudio } from "@/lib/cyberAudio";
 
 const statusColors: Record<string, string> = {
-  active: "bg-secondary/20 text-secondary border-secondary/50",
-  development: "bg-primary/20 text-primary border-primary/50",
-  completed: "bg-green-500/20 text-green-500 border-green-500/50",
-  classified: "bg-destructive/20 text-destructive border-destructive/50",
-};
-
-const languageColors: Record<string, string> = {
-  Python: "bg-yellow-500",
-  Rust: "bg-orange-500",
-  Go: "bg-cyan-500",
-  TypeScript: "bg-blue-500",
-  JavaScript: "bg-yellow-400",
-  Java: "bg-red-500",
-  "C++": "bg-purple-500",
-  C: "bg-gray-500",
+  active: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
+  development: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40",
+  completed: "bg-blue-500/20 text-blue-400 border-blue-500/40",
+  classified: "bg-red-500/20 text-red-400 border-red-500/40",
 };
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const { data: projects, isLoading } = useProjects();
+  const [copied, setCopied] = useState(false);
 
   const project = projects?.find((p) => p.id === id);
+
+  const handleCopyClone = (gitUrl: string) => {
+    cyberAudio.playClick();
+    navigator.clipboard.writeText(`git clone ${gitUrl}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (isLoading) {
     return (
       <Layout>
-        <section className="min-h-[85vh] flex items-center justify-center">
+        <section className="min-h-[80vh] flex items-center justify-center">
           <div className="text-center">
-            <Terminal className="w-12 h-12 text-primary mx-auto mb-4 animate-pulse" />
-            <p className="text-muted-foreground font-mono">Loading project...</p>
+            <Terminal className="w-10 h-10 text-cyan-400 mx-auto mb-4 animate-pulse" />
+            <p className="text-zinc-400 font-mono text-sm">Decentralized Project Retrieval...</p>
           </div>
         </section>
       </Layout>
@@ -56,22 +59,20 @@ export default function ProjectDetail() {
   if (!project) {
     return (
       <Layout>
-        <section className="min-h-[85vh] flex items-center justify-center px-4">
-          <CyberCard variant="terminal" className="text-center p-12 max-w-md">
-            <Terminal className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-xl font-display font-bold text-foreground mb-2">
-              Project Not Found
-            </h2>
-            <p className="text-muted-foreground font-mono mb-6">
-              The project you're looking for doesn't exist.
+        <section className="min-h-[80vh] flex items-center justify-center px-4">
+          <div className="p-8 rounded-2xl bg-[#070d18] border border-zinc-800 text-center max-w-md">
+            <Terminal className="w-10 h-10 text-red-400 mx-auto mb-4" />
+            <h2 className="text-xl font-display font-bold text-white mb-2">Project Dossier Not Found</h2>
+            <p className="text-zinc-400 font-mono text-xs mb-6">
+              The requested repository ID does not match any public records.
             </p>
             <Link to="/projects">
-              <Button variant="cyber">
+              <Button className="bg-cyan-500 text-black font-mono font-bold text-xs">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Projects
+                Return to Blueprints
               </Button>
             </Link>
-          </CyberCard>
+          </div>
         </section>
       </Layout>
     );
@@ -79,190 +80,180 @@ export default function ProjectDetail() {
 
   return (
     <Layout>
-      <section className="py-20 px-4">
+      <section className="py-12 md:py-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          {/* Back Button */}
-          <Link to="/projects" className="inline-block mb-8">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Projects
-            </Button>
+          {/* Back Action */}
+          <Link
+            to="/projects"
+            onClick={() => cyberAudio.playClick()}
+            className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 hover:text-cyan-400 mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to All Blueprints
           </Link>
 
-          {/* Project Image */}
-          {project.image_url && (
-            <div className="mb-8 rounded-lg overflow-hidden border border-primary/20">
-              <img
-                src={project.image_url}
-                alt={project.title}
-                loading="lazy"
-                className="w-full h-64 md:h-96 object-cover"
-              />
-            </div>
-          )}
-
-          {/* Header */}
-          <CyberCard variant="glow" className="p-8 mb-8">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <GitBranch className="w-8 h-8 text-primary" />
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                  {project.title}
-                </h1>
-              </div>
-              {project.status === "classified" ? (
-                <Lock className="w-6 h-6 text-destructive" />
-              ) : (
-                <Badge
-                  variant="outline"
-                  className={statusColors[project.status] || statusColors.active}
-                >
-                  {project.status}
-                </Badge>
-              )}
-            </div>
-
-            <p className="text-muted-foreground text-lg mb-6">
-              {project.description || "No description provided"}
-            </p>
-
-            {/* Meta Info */}
-            <div className="flex flex-wrap gap-4 mb-6">
-              {project.language && (
+          {/* Main Blueprint Dossier Card */}
+          <div className="rounded-3xl p-1 bg-gradient-to-b from-cyan-500/25 via-zinc-800/20 to-transparent border border-cyan-500/30 backdrop-blur-2xl shadow-2xl overflow-hidden">
+            <div className="rounded-[calc(1.5rem-2px)] bg-[#070d18]/95 p-6 md:p-10 space-y-8">
+              {/* Tactical Top Telemetry */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-zinc-800/80 text-[11px] font-mono text-zinc-400">
                 <div className="flex items-center gap-2">
-                  <div
-                    className={`w-3 h-3 rounded-full ${
-                      languageColors[project.language] || "bg-gray-400"
-                    }`}
-                  />
-                  <span className="text-sm font-mono text-muted-foreground">
-                    {project.language}
-                  </span>
+                  <span className="text-cyan-400 font-bold">DOC: PRJ-{project.id.slice(0, 8).toUpperCase()}</span>
+                  <span>•</span>
+                  <span>SECURITY CLEARANCE: PUBLIC</span>
                 </div>
-              )}
-              {project.stars !== null && project.stars > 0 && (
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Star className="w-4 h-4" />
-                  <span className="text-sm font-mono">{project.stars}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm font-mono">
-                  {new Date(project.created_at).toLocaleDateString()}
+                <span
+                  className={`px-2.5 py-0.5 rounded uppercase font-bold text-[10px] border ${
+                    statusColors[project.status] || statusColors.active
+                  }`}
+                >
+                  STATUS: {project.status || "ACTIVE"}
                 </span>
               </div>
-            </div>
 
-            {/* Tags */}
-            {project.tags && project.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
-                {project.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="outline"
-                    className="font-mono border-primary/30 text-muted-foreground"
-                  >
-                    #{tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            {/* Team Members or Owner */}
-            {project.is_team_project &&
-              project.members &&
-              project.members.length > 0 ? (
-                <div className="mb-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Users className="w-4 h-4 text-secondary" />
-                    <span className="text-sm font-semibold text-foreground">
-                      Team Members
-                    </span>
+              {/* Title & Headline */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
+                    <GitBranch className="w-6 h-6" />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {project.members.map((member) => (
-                      <Link
-                        key={member.id}
-                        to={`/member/${member.id}`}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary/10 border border-secondary/30 rounded-full hover:bg-secondary/20 transition-colors"
-                      >
-                        {member.avatar_url ? (
-                          <img
-                            src={member.avatar_url}
-                            alt={member.username || "Member"}
-                            loading="lazy"
-                            className="w-5 h-5 rounded-full"
-                          />
-                        ) : (
-                          <div className="w-5 h-5 rounded-full bg-secondary/30" />
-                        )}
-                        <span className="text-sm text-secondary">
-                          @{member.username || member.email?.split("@")[0]}
+                  <div>
+                    <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-white">
+                      {project.title}
+                    </h1>
+                    <div className="flex items-center gap-3 text-xs font-mono text-zinc-400 mt-1">
+                      {project.language && <span>Stack: {project.language}</span>}
+                      {project.stars !== null && project.stars > 0 && (
+                        <span className="flex items-center gap-1 text-amber-400">
+                          <Star className="w-3.5 h-3.5" /> {project.stars} stars
                         </span>
-                      </Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hero Showcase Image */}
+                {project.image_url && (
+                  <div className="rounded-2xl overflow-hidden border border-zinc-800 mt-6 group relative">
+                    <img
+                      src={project.image_url}
+                      alt={project.title}
+                      className="w-full h-auto max-h-96 object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#070d18] via-transparent to-transparent opacity-60" />
+                  </div>
+                )}
+              </div>
+
+              {/* Description Body */}
+              <div className="space-y-4">
+                <h3 className="font-mono text-xs uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-2">
+                  <Layers className="w-3.5 h-3.5" />
+                  Architectural Summary & Mission
+                </h3>
+                <div className="text-sm text-zinc-300 font-sans leading-relaxed whitespace-pre-line bg-[#040810]/60 p-6 rounded-2xl border border-zinc-800/80">
+                  {project.description || "No architectural notes recorded."}
+                </div>
+              </div>
+
+              {/* Tags Matrix */}
+              {project.tags && project.tags.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-mono text-xs text-zinc-400">Tags & Technology Vectors:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs font-mono px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-cyan-300"
+                      >
+                        #{tag}
+                      </span>
                     ))}
                   </div>
                 </div>
-              ) : (
-                project.owner && (
-                  <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Users className="w-4 h-4 text-secondary" />
-                      <span className="text-sm font-semibold text-foreground">
-                        Owner
-                      </span>
-                    </div>
-                    <Link
-                      to={`/member/${project.owner.id}`}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary/10 border border-secondary/30 rounded-full hover:bg-secondary/20 transition-colors"
-                    >
-                      {project.owner.avatar_url ? (
-                        <img
-                          src={project.owner.avatar_url}
-                          alt={project.owner.username || "Owner"}
-                          loading="lazy"
-                          className="w-5 h-5 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-5 h-5 rounded-full bg-secondary/30" />
-                      )}
-                      <span className="text-sm text-secondary">
-                        @{project.owner.username || project.owner.email?.split("@")[0]}
-                      </span>
-                    </Link>
-                  </div>
-                )
               )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-4">
+              {/* Clone Command Snippet */}
               {project.github_url && (
-                <a
-                  href={project.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button variant="cyber">
-                    <Code className="w-4 h-4 mr-2" />
-                    View on GitHub
-                  </Button>
-                </a>
+                <div className="space-y-2">
+                  <h4 className="font-mono text-xs text-zinc-400 flex items-center justify-between">
+                    <span>Clone Repository:</span>
+                    <span className="text-[10px] text-zinc-500">Terminal command</span>
+                  </h4>
+                  <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-black border border-cyan-500/30 font-mono text-xs text-cyan-300">
+                    <code className="truncate">git clone {project.github_url}</code>
+                    <button
+                      onClick={() => handleCopyClone(project.github_url!)}
+                      className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-cyan-400 transition-colors shrink-0 flex items-center gap-1.5"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-[10px] text-emerald-400">COPIED</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span className="text-[10px]">COPY</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               )}
-              {project.demo_url && (
-                <a
-                  href={project.demo_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button variant="cyber-secondary">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Live Project
-                  </Button>
-                </a>
-              )}
+
+              {/* Contributors / Owner */}
+              <div className="pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                {project.is_team_project ? (
+                  <div className="flex items-center gap-2 text-xs font-mono text-zinc-300">
+                    <Users className="w-4 h-4 text-cyan-400" />
+                    <span>Multi-Operative Team Collaboration</span>
+                  </div>
+                ) : project.owner ? (
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-cyan-950 border border-cyan-500/40 overflow-hidden">
+                      {project.owner.avatar_url ? (
+                        <img src={project.owner.avatar_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs">🐺</div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-xs font-mono font-bold text-white">{project.owner.full_name || project.owner.username}</div>
+                      <Link to={`/member/${project.owner.id}`} className="text-[11px] font-mono text-cyan-400 hover:underline">
+                        @{project.owner.username}
+                      </Link>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Live Actions */}
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  {project.github_url && (
+                    <a
+                      href={project.github_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 text-white font-mono text-xs transition-all"
+                    >
+                      <Code className="w-4 h-4 text-cyan-400" />
+                      GitHub Repo
+                    </a>
+                  )}
+                  {project.demo_url && (
+                    <a
+                      href={project.demo_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-bold font-mono text-xs hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(0,240,255,0.3)]"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Live Launch
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-          </CyberCard>
+          </div>
         </div>
       </section>
     </Layout>

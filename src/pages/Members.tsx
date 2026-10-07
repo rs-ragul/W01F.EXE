@@ -1,27 +1,34 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { CyberCard } from "@/components/cyber/CyberCard";
 import { Badge } from "@/components/ui/badge";
 import { useProfilesWithRoles } from "@/hooks/useProfiles";
-import { 
-  Users, 
-  Shield, 
-  Github, 
-  Linkedin, 
+import {
+  Users,
+  Shield,
+  Github,
+  Linkedin,
   Globe,
   Terminal,
+  Crown,
+  Flame,
+  Radio,
+  ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
+import { cyberAudio } from "@/lib/cyberAudio";
 
-const levelColors: Record<string, { bg: string; text: string; border: string }> = {
+const roleBorders: Record<string, { badge: string; glow: string; text: string; bg: string }> = {
   admin: {
-    bg: "bg-secondary/20",
-    text: "text-secondary",
-    border: "border-secondary/50",
+    badge: "COMMAND // ADMIN",
+    glow: "border-red-500/40 hover:border-red-400 hover:shadow-[0_0_30px_rgba(255,59,48,0.3)]",
+    text: "text-red-400",
+    bg: "bg-red-500/10",
   },
   member: {
-    bg: "bg-primary/20",
-    text: "text-primary",
-    border: "border-primary/50",
+    badge: "OPERATIVE",
+    glow: "border-cyan-500/30 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(0,240,255,0.25)]",
+    text: "text-cyan-400",
+    bg: "bg-cyan-500/10",
   },
 };
 
@@ -30,47 +37,32 @@ export default function Members() {
 
   return (
     <Layout>
-      <section className="py-20 px-4">
-        <div className="container mx-auto">
+      <section className="py-12 md:py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
           {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/80 border border-primary/30 rounded-full mb-6">
-              <Users className="w-4 h-4 text-primary" />
-              <span className="text-sm font-mono text-muted-foreground">
-                The Team
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#081220]/80 border border-cyan-500/30 rounded-full mb-4 select-none">
+              <Users className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs font-mono text-cyan-300 uppercase tracking-widest font-bold">
+                TACTICAL ROSTER // AGENTS & LEADS
               </span>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-              <span className="text-primary">@</span> Members
+            <h1 className="font-display text-4xl md:text-5xl font-black text-white mb-4">
+              <span className="text-cyan-400">@</span> Operatives & Researchers
             </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Meet the security researchers behind w0lf.exe.
+            <p className="text-zinc-400 max-w-2xl mx-auto font-sans text-sm sm:text-base">
+              The ethical hackers, systems architects, and competitive CTF minds driving the w0lf.exe collective.
             </p>
-          </div>
-
-          {/* Legend */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {Object.entries(levelColors).map(([level, colors]) => (
-              <div
-                key={level}
-                className={`flex items-center gap-2 px-3 py-1 rounded-full ${colors.bg} ${colors.border} border`}
-              >
-                <Shield className={`w-3 h-3 ${colors.text}`} />
-                <span className={`text-xs font-mono uppercase ${colors.text}`}>
-                  {level}
-                </span>
-              </div>
-            ))}
           </div>
 
           {/* Members Grid */}
           {isLoading ? (
-            <div className="text-center py-12">
-              <Terminal className="w-8 h-8 text-primary mx-auto mb-4 animate-pulse" />
-              <p className="text-muted-foreground font-mono">Loading operatives...</p>
+            <div className="text-center py-20">
+              <Terminal className="w-10 h-10 text-cyan-400 mx-auto mb-4 animate-pulse" />
+              <p className="text-zinc-400 font-mono text-sm">Accessing classified agent dossier...</p>
             </div>
           ) : profiles && profiles.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...profiles]
                 .sort((a, b) => {
                   if (a.role === "admin" && b.role !== "admin") return -1;
@@ -79,140 +71,152 @@ export default function Members() {
                   const bName = b.full_name || b.username || "";
                   return aName.localeCompare(bName);
                 })
-                .map((member, index) => {
-                // Get the role directly from the member object
-                const memberRole = member.role;
-                const colors = levelColors[memberRole] || levelColors.member;
-                return (
-                  <Link to={`/member/${member.id}`} key={member.id}>
-                    <CyberCard
-                      className="animate-fade-in hover:scale-105 transition-all duration-300 cursor-pointer group text-center h-full"
-                      style={{ animationDelay: `${index * 0.05}s` }}
+                .map((member) => {
+                  const roleStyle = roleBorders[member.role] || roleBorders.member;
+                  const isLead = member.team_role?.toLowerCase().includes("founder") || member.team_role?.toLowerCase().includes("lead");
+
+                  return (
+                    <div
+                      key={member.id}
+                      className={`group rounded-2xl p-1 bg-gradient-to-b from-cyan-500/20 via-zinc-800/20 to-transparent border ${roleStyle.glow} transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between`}
+                      onMouseEnter={() => cyberAudio.playHover()}
                     >
-                      {/* Role Badge */}
-                      <div className="flex justify-center mb-2">
-                        <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${colors.bg} ${colors.border} border`}>
-                          <Shield className={`w-3 h-3 ${colors.text}`} />
-                          <span className={`text-xs font-mono uppercase ${colors.text}`}>
-                            {memberRole}
-                          </span>
+                      <div className="h-full rounded-[calc(1rem-2px)] bg-[#070d18]/90 p-6 flex flex-col justify-between backdrop-blur-xl relative overflow-hidden">
+                        {/* Corner Reticle */}
+                        <div className="absolute top-2 right-2 text-[10px] font-mono text-zinc-600 select-none">
+                          AGENT-{member.username.slice(0, 4).toUpperCase()}
                         </div>
-                      </div>
-                      
-                      {/* Avatar */}
-                      <div className="relative inline-block mb-4">
-                        <div
-                          className={`w-20 h-20 mx-auto flex items-center justify-center text-4xl rounded-lg ${colors.bg} ${colors.border} border group-hover:scale-110 transition-transform duration-300 overflow-hidden`}
-                        >
-                          {member.avatar_url ? (
-                            <img
-                              src={member.avatar_url}
-                              alt={member.username || "Member"}
-                              loading="lazy"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-2xl">👤</span>
-                          )}
-                        </div>
-                      </div>
 
-                      {/* Name */}
-                      <h3 className="font-display text-lg text-primary cyber-text-glow mb-2">
-                        {member.full_name || member.username || "Unknown"}
-                      </h3>
-
-                      {/* Team Role / Department */}
-                      {(member.team_role || member.department) && (
-                        <div className="flex flex-col items-center gap-1 mb-2">
-                          {member.team_role && (
-                            <Badge
-                              variant="outline"
-                              className="border-destructive/60 text-destructive bg-destructive/10 font-mono text-xs"
+                        <div>
+                          {/* Role Badge & Status */}
+                          <div className="flex items-center justify-between mb-4">
+                            <span
+                              className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 ${roleStyle.bg} ${roleStyle.text} border border-current/30`}
                             >
-                              {member.team_role}
-                            </Badge>
-                          )}
-                          {member.department && (
-                            <Badge
-                              variant="outline"
-                              className="border-primary/40 text-primary font-mono text-xs"
-                            >
-                              {member.department}
-                            </Badge>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Skills */}
-                      {member.skills && member.skills.length > 0 && (
-                        <>
-                          <div className="w-full h-px bg-primary/20 my-2" />
-                          <div className="flex flex-wrap justify-center gap-1 mb-3">
-                            {member.skills.slice(0, 2).map((skill) => (
-                              <Badge
-                                key={skill}
-                                variant="outline"
-                                className={`${colors.border} ${colors.text} font-mono text-xs`}
-                              >
-                                {skill}
-                              </Badge>
-                            ))}
+                              {member.role === "admin" ? <Crown className="w-3 h-3 text-amber-400" /> : <Shield className="w-3 h-3" />}
+                              {roleStyle.badge}
+                            </span>
+                            <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                              ACTIVE
+                            </span>
                           </div>
-                        </>
-                      )}
 
-                      {/* Social Links */}
-                      <div className="flex justify-center gap-3 mt-4 pt-4 border-t border-primary/20">
-                        {member.github_url && (
-                          <a
-                            href={member.github_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Open ${member.username || "member"} GitHub profile`}
-                            className="text-muted-foreground hover:text-primary transition-colors"
-                            onClick={(e) => e.stopPropagation()}
+                          {/* Avatar & Ident */}
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="relative w-16 h-16 rounded-2xl bg-[#091220] border border-cyan-500/40 p-0.5 overflow-hidden group-hover:scale-105 group-hover:border-cyan-400 transition-all shrink-0">
+                              {member.avatar_url ? (
+                                <img
+                                  src={member.avatar_url}
+                                  alt={member.full_name || member.username}
+                                  className="w-full h-full object-cover rounded-[calc(1rem-2px)]"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-xl bg-cyan-950/60 text-cyan-400">
+                                  🐺
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <h3 className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                {member.full_name || member.username}
+                              </h3>
+                              <p className="text-xs font-mono text-zinc-400">
+                                @{member.username}
+                              </p>
+                              {member.team_role && (
+                                <div className="text-[11px] font-mono font-bold text-amber-400 mt-0.5">
+                                  {member.team_role}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Bio */}
+                          <p className="text-xs text-zinc-400 font-sans leading-relaxed line-clamp-3 mb-4">
+                            {member.bio || "Active security researcher and core member of team w0lf.exe."}
+                          </p>
+
+                          {/* Department */}
+                          {member.department && (
+                            <div className="text-[11px] font-mono text-zinc-400 mb-3 bg-zinc-900/60 px-2 py-1 rounded border border-zinc-800">
+                              <span className="text-zinc-500">Dept: </span>
+                              <span className="text-zinc-300">{member.department}</span>
+                            </div>
+                          )}
+
+                          {/* Skills Chips */}
+                          {member.skills && member.skills.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-4">
+                              {member.skills.map((skill) => (
+                                <span
+                                  key={skill}
+                                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/40 text-cyan-300 border border-cyan-800/40"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Footer Socials & Dossier Button */}
+                        <div className="pt-4 border-t border-zinc-800/80 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {member.github_url && (
+                              <a
+                                href={member.github_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 rounded-lg bg-zinc-900 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
+                                aria-label="GitHub"
+                              >
+                                <Github className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            {member.linkedin_url && (
+                              <a
+                                href={member.linkedin_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 rounded-lg bg-zinc-900 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
+                                aria-label="LinkedIn"
+                              >
+                                <Linkedin className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            {member.website_url && (
+                              <a
+                                href={member.website_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 rounded-lg bg-zinc-900 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
+                                aria-label="Website"
+                              >
+                                <Globe className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                          </div>
+
+                          <Link
+                            to={`/member/${member.id}`}
+                            onClick={() => cyberAudio.playClick()}
+                            className="text-xs font-mono text-cyan-400 hover:text-cyan-200 font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform"
                           >
-                            <Github className="w-4 h-4" />
-                          </a>
-                        )}
-                        {member.linkedin_url && (
-                          <a
-                            href={member.linkedin_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Open ${member.username || "member"} LinkedIn profile`}
-                            className="text-muted-foreground hover:text-primary transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Linkedin className="w-4 h-4" />
-                          </a>
-                        )}
-                        {member.website_url && (
-                          <a
-                            href={member.website_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Open ${member.username || "member"} website`}
-                            className="text-muted-foreground hover:text-primary transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Globe className="w-4 h-4" />
-                          </a>
-                        )}
+                            Profile Dossier <ArrowUpRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
                       </div>
-                    </CyberCard>
-                  </Link>
-                );
-              })}
+                    </div>
+                  );
+                })}
             </div>
           ) : (
-            <CyberCard variant="terminal" className="text-center p-12">
-              <Terminal className="w-12 h-12 text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground font-mono">
-                No operatives found. Members are added by admin.
-              </p>
-            </CyberCard>
+            <div className="text-center py-16 bg-[#060b14]/70 border border-zinc-800 rounded-2xl">
+              <Users className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
+              <p className="text-zinc-400 font-mono text-sm">No operatives found in the roster.</p>
+            </div>
           )}
         </div>
       </section>

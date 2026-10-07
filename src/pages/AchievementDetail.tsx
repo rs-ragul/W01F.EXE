@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { CyberCard } from "@/components/cyber/CyberCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAchievements } from "@/hooks/useAchievements";
@@ -16,7 +15,10 @@ import {
   Users,
   ArrowLeft,
   Calendar,
+  Sparkles,
 } from "lucide-react";
+import confetti from "canvas-confetti";
+import { cyberAudio } from "@/lib/cyberAudio";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Trophy,
@@ -30,29 +32,24 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 const typeColors: Record<string, { bg: string; text: string; border: string }> = {
   competition: {
-    bg: "bg-primary/10",
-    text: "text-primary",
-    border: "border-primary/50",
+    bg: "bg-amber-500/10",
+    text: "text-amber-400",
+    border: "border-amber-500/40",
   },
   recognition: {
-    bg: "bg-secondary/10",
-    text: "text-secondary",
-    border: "border-secondary/50",
-  },
-  ranking: {
-    bg: "bg-accent/10",
-    text: "text-accent",
-    border: "border-accent/50",
+    bg: "bg-cyan-500/10",
+    text: "text-cyan-400",
+    border: "border-cyan-500/40",
   },
   discovery: {
-    bg: "bg-orange-500/10",
-    text: "text-orange-500",
-    border: "border-orange-500/50",
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-400",
+    border: "border-emerald-500/40",
   },
   certification: {
-    bg: "bg-blue-500/10",
-    text: "text-blue-500",
-    border: "border-blue-500/50",
+    bg: "bg-purple-500/10",
+    text: "text-purple-400",
+    border: "border-purple-500/40",
   },
 };
 
@@ -62,15 +59,23 @@ export default function AchievementDetail() {
 
   const achievement = achievements?.find((a) => a.id === id);
 
+  const triggerConfetti = () => {
+    cyberAudio.playTrophyFanfare();
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#ffd700", "#00f0ff", "#ff3366"],
+    });
+  };
+
   if (isLoading) {
     return (
       <Layout>
-        <section className="min-h-[85vh] flex items-center justify-center">
+        <section className="min-h-[80vh] flex items-center justify-center">
           <div className="text-center">
-            <Terminal className="w-12 h-12 text-primary mx-auto mb-4 animate-pulse" />
-            <p className="text-muted-foreground font-mono">
-              Loading achievement...
-            </p>
+            <Terminal className="w-10 h-10 text-amber-400 mx-auto mb-4 animate-pulse" />
+            <p className="text-zinc-400 font-mono text-sm">Querying verified credentials...</p>
           </div>
         </section>
       </Layout>
@@ -80,22 +85,20 @@ export default function AchievementDetail() {
   if (!achievement) {
     return (
       <Layout>
-        <section className="min-h-[85vh] flex items-center justify-center px-4">
-          <CyberCard variant="terminal" className="text-center p-12 max-w-md">
-            <Terminal className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-xl font-display font-bold text-foreground mb-2">
-              Achievement Not Found
-            </h2>
-            <p className="text-muted-foreground font-mono mb-6">
-              The achievement you're looking for doesn't exist.
+        <section className="min-h-[80vh] flex items-center justify-center px-4">
+          <div className="p-8 rounded-2xl bg-[#070d18] border border-zinc-800 text-center max-w-md">
+            <Trophy className="w-10 h-10 text-zinc-600 mx-auto mb-4" />
+            <h2 className="text-xl font-display font-bold text-white mb-2">Milestone Not Found</h2>
+            <p className="text-zinc-400 font-mono text-xs mb-6">
+              The requested record ID does not match any verified achievements.
             </p>
             <Link to="/achievements">
-              <Button variant="cyber">
+              <Button className="bg-amber-500 text-black font-mono font-bold text-xs">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Achievements
+                Return to Victories
               </Button>
             </Link>
-          </CyberCard>
+          </div>
         </section>
       </Layout>
     );
@@ -106,149 +109,108 @@ export default function AchievementDetail() {
 
   return (
     <Layout>
-      <section className="py-20 px-4">
+      <section className="py-12 md:py-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          {/* Back Button */}
-          <Link to="/achievements" className="inline-block mb-8">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Achievements
-            </Button>
+          {/* Back Action */}
+          <Link
+            to="/achievements"
+            onClick={() => cyberAudio.playClick()}
+            className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 hover:text-amber-400 mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Hall of Fame
           </Link>
 
-          {/* Achievement Image */}
-          {achievement.image_url && (
-            <div className="mb-8 rounded-lg overflow-hidden border border-primary/20">
-              <img
-                src={achievement.image_url}
-                alt={achievement.title}
-                loading="lazy"
-                className="w-full h-64 md:h-96 object-cover"
-              />
-            </div>
-          )}
+          {/* Victory Card */}
+          <div className="rounded-3xl p-1 bg-gradient-to-b from-amber-500/25 via-zinc-800/20 to-transparent border border-amber-500/30 backdrop-blur-2xl shadow-2xl overflow-hidden">
+            <div className="rounded-[calc(1.5rem-2px)] bg-[#070d18]/95 p-6 md:p-10 space-y-8">
+              {/* Tactical Header */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-zinc-800/80 text-[11px] font-mono text-zinc-400">
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 font-bold">VERIFIED CTF / AWARD RECORD</span>
+                  <span>•</span>
+                  <span>ID: {achievement.id.slice(0, 8).toUpperCase()}</span>
+                </div>
+                <button
+                  onClick={triggerConfetti}
+                  className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold flex items-center gap-1.5 hover:bg-amber-500/30 transition-colors"
+                >
+                  <Sparkles className="w-3 h-3" /> CELEBRATE VICTORY
+                </button>
+              </div>
 
-          {/* Achievement Card */}
-          <CyberCard variant="glow" className="p-8">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+              {/* Title & Icon */}
               <div className="flex items-start gap-4">
                 <div
-                  className={`w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-lg ${colors.bg} ${colors.border} border-2 shrink-0`}
+                  className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border ${colors.bg} ${colors.border}`}
                 >
-                  <IconComponent className={`w-8 h-8 sm:w-10 sm:h-10 ${colors.text}`} />
+                  <IconComponent className={`w-8 h-8 ${colors.text}`} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                      {achievement.title}
-                    </h1>
-                    {achievement.is_highlighted && (
-                      <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    <Badge
-                      variant="outline"
-                      className={`${colors.text} ${colors.border} uppercase`}
-                    >
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase font-bold ${colors.bg} ${colors.border} ${colors.text}`}>
                       {achievement.achievement_type}
-                    </Badge>
+                    </span>
                     {achievement.achievement_date && (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-sm font-mono">
-                          {new Date(achievement.achievement_date).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "long",
-                              day: "numeric",
-                              year: "numeric",
-                            }
-                          )}
-                        </span>
-                      </div>
+                      <span className="text-xs font-mono text-zinc-400 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-zinc-500" />
+                        {new Date(achievement.achievement_date).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
                     )}
                   </div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
+                    {achievement.title}
+                  </h1>
                 </div>
               </div>
-            </div>
 
-            {/* Description */}
-            <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              {achievement.description || "No description provided"}
-            </p>
-
-            {/* Team Members or Owner */}
-            {achievement.is_team_achievement &&
-              achievement.members &&
-              achievement.members.length > 0 ? (
-                <div className="pt-6 border-t border-primary/20">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Users className="w-5 h-5 text-secondary" />
-                    <span className="font-display font-semibold text-foreground">
-                      Team Members
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    {achievement.members.map((member) => (
-                      <Link
-                        key={member.id}
-                        to={`/member/${member.id}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/30 rounded-full hover:bg-secondary/20 transition-colors"
-                      >
-                        {member.avatar_url ? (
-                          <img
-                            src={member.avatar_url}
-                            alt={member.username || "Member"}
-                            loading="lazy"
-                            className="w-6 h-6 rounded-full"
-                          />
-                        ) : (
-                          <div className="w-6 h-6 rounded-full bg-secondary/30" />
-                        )}
-                        <span className="text-sm text-secondary">
-                          @{member.username || member.email?.split("@")[0]}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
+              {/* Certificate or Event Photo */}
+              {achievement.image_url && (
+                <div className="rounded-2xl overflow-hidden border border-zinc-800 group relative">
+                  <img
+                    src={achievement.image_url}
+                    alt={achievement.title}
+                    className="w-full h-auto max-h-96 object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#070d18] via-transparent to-transparent opacity-50" />
                 </div>
-              ) : (
-                achievement.owner && (
-                  <div className="pt-6 border-t border-primary/20">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Users className="w-5 h-5 text-secondary" />
-                      <span className="font-display font-semibold text-foreground">
-                        Owner
-                      </span>
-                    </div>
-                    <Link
-                      to={`/member/${achievement.owner.id}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/30 rounded-full hover:bg-secondary/20 transition-colors"
-                    >
-                      {achievement.owner.avatar_url ? (
-                        <img
-                          src={achievement.owner.avatar_url}
-                          alt={achievement.owner.username || "Owner"}
-                          loading="lazy"
-                          className="w-6 h-6 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full bg-secondary/30" />
-                      )}
-                      <span className="text-sm text-secondary">
-                        @{achievement.owner.username || achievement.owner.email?.split("@")[0]}
-                      </span>
-                    </Link>
-                  </div>
-                )
               )}
-          </CyberCard>
+
+              {/* Description / Summary */}
+              <div className="space-y-4">
+                <h3 className="font-mono text-xs uppercase tracking-widest text-amber-400 font-bold">
+                  Dossier Intelligence & Evaluation
+                </h3>
+                <div className="text-sm text-zinc-300 font-sans leading-relaxed whitespace-pre-line bg-[#040810]/60 p-6 rounded-2xl border border-zinc-800/80">
+                  {achievement.description || "Verified cybersecurity achievement."}
+                </div>
+              </div>
+
+              {/* Team Members or Owner */}
+              <div className="pt-6 border-t border-zinc-800/80 flex items-center justify-between">
+                {achievement.is_team_achievement ? (
+                  <div className="flex items-center gap-2 text-xs font-mono text-amber-300">
+                    <Users className="w-4 h-4 text-amber-400" />
+                    <span>Official Team W01F.EXE Squad Victory</span>
+                  </div>
+                ) : achievement.owner ? (
+                  <div className="text-xs font-mono text-zinc-400">
+                    <span>Awarded To: </span>
+                    <span className="text-amber-400 font-bold">@{achievement.owner.username}</span>
+                  </div>
+                ) : null}
+
+                <Link to="/achievements">
+                  <Button variant="outline" className="border-zinc-800 text-zinc-300 hover:text-white font-mono text-xs">
+                    All Victories ›
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </Layout>

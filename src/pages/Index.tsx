@@ -1,13 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CyberCard } from "@/components/cyber/CyberCard";
-import { HexagonCard } from "@/components/cyber/HexagonCard";
+import { TrophyShowcase } from "@/components/cyber/TrophyShowcase";
+import { DomainsBento } from "@/components/cyber/DomainsBento";
+import { ProjectsSpotlight } from "@/components/cyber/ProjectsSpotlight";
+import { SkillsMatrix } from "@/components/cyber/SkillsMatrix";
+import { CyberTerminal } from "@/components/cyber/CyberTerminal";
 import { StatCounter } from "@/components/cyber/StatCounter";
 import { CircuitDivider } from "@/components/cyber/CircuitDivider";
-import { Reveal } from "@/components/cyber/Reveal";
 import { useSiteStats } from "@/hooks/useSiteStats";
+import { useProjects } from "@/hooks/useProjects";
+import { useAchievements } from "@/hooks/useAchievements";
+import { useProfiles } from "@/hooks/useProfiles";
+import { cyberAudio } from "@/lib/cyberAudio";
 import {
   Shield,
   Terminal,
@@ -15,57 +21,60 @@ import {
   Users,
   Trophy,
   ChevronRight,
+  Flame,
   Zap,
+  Radio,
+  ExternalLink,
+  Target,
+  Sparkles,
+  Layers,
+  Smartphone,
   Cpu,
-  CircuitBoard,
+  Mail,
+  Github,
 } from "lucide-react";
-
-interface StatDisplay {
-  value: number;
-  label: string;
-  suffix?: string;
-}
-
-const features = [
-  {
-    icon: Shield,
-    title: "Security Research",
-    description: "Offense, defense, CTFs, and secure engineering practice.",
-  },
-  {
-    icon: Code,
-    title: "Software Systems",
-    description: "Products, tooling, open-source builds, and rapid prototypes.",
-  },
-  {
-    icon: Cpu,
-    title: "AI & Automation",
-    description: "Applied intelligence, agents, model experiments, and workflows.",
-  },
-  {
-    icon: CircuitBoard,
-    title: "Hardware Lab",
-    description: "Embedded systems, electronics, and hands-on engineering.",
-  },
-];
 
 export default function Index() {
   const { data: siteStats, isLoading: statsLoading } = useSiteStats();
+  const { data: projects, isLoading: projectsLoading } = useProjects();
+  const { data: achievements, isLoading: achievementsLoading } = useAchievements();
+  const { data: profiles } = useProfiles();
+  const [isTerminalModalOpen, setIsTerminalModalOpen] = useState(false);
 
-  // Transform site stats for display
-  const statsForDisplay: StatDisplay[] = (siteStats || []).map((stat) => ({
+  // Dynamic Site Stats from Supabase
+  const dynamicStats = (siteStats || []).map((stat) => ({
     value: stat.stat_value,
     label: stat.stat_label,
-    suffix: stat.stat_key.includes("bounty") ? "+" : "",
+    suffix: stat.stat_key.includes("bounty") ? "+" : "+",
   }));
+
+  // Fallback stats if database is empty initially
+  const displayStats =
+    dynamicStats.length > 0
+      ? dynamicStats
+      : [
+          { value: 2, label: "CTF 1st Titles", suffix: "+" },
+          { value: 6, label: "Active Codebases", suffix: "+" },
+          { value: 2, label: "Core Operatives", suffix: "" },
+          { value: 1, label: "Hackathons Won", suffix: "+" },
+        ];
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative flex min-h-[640px] items-center overflow-hidden px-4 py-16 md:min-h-[calc(100vh-4rem)] md:py-24">
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 1: HERO WITH AUTHENTIC WOLF ARTWORK & MOTION
+          Utilizes the user's authentic hero-wolf-bg.png with kinetic
+          circuit flow streams, optic sensor pulses, and light scans.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="relative flex min-h-[680px] items-center overflow-hidden px-4 py-16 md:min-h-[calc(100vh-4rem)] md:py-24">
+        {/* User's Exact Hero Wolf Background Image */}
         <div className="hero-home-bg absolute inset-0" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(220_24%_5%/0.94)_0%,hsl(220_24%_5%/0.78)_34%,hsl(220_24%_5%/0.2)_62%,transparent_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_44%,hsl(var(--primary)/0.08),transparent_38%)]" />
+
+        {/* Cinematic Gradient Overlays for High Legibility */}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(220_24%_5%/0.95)_0%,hsl(220_24%_5%/0.82)_38%,hsl(220_24%_5%/0.35)_68%,transparent_100%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_44%,rgba(0,240,255,0.08),transparent_50%)] pointer-events-none" />
+
+        {/* Kinetic Animated Circuit Stream Lines & Optic Sensors */}
         <div className="hero-wolf-activity pointer-events-none absolute inset-0">
           <svg
             className="hero-flow-lines absolute inset-0 h-full w-full"
@@ -74,18 +83,21 @@ export default function Index() {
             fill="none"
             aria-hidden="true"
           >
+            {/* Red Team Circuit Lines */}
             <g className="hero-flow hero-flow-red" strokeLinecap="round" strokeLinejoin="round">
               <path d="M780 456H646l-48-48H492" />
               <path d="M792 548H646l-56 56H474" />
               <path d="M852 642 770 724H642" />
               <path d="M828 332 760 264h-96" />
             </g>
+            {/* Blue Team Circuit Lines */}
             <g className="hero-flow hero-flow-blue" strokeLinecap="round" strokeLinejoin="round">
               <path d="M1342 332h126l54-54h78" />
               <path d="M1330 448h150l52 52h86" />
               <path d="M1294 586 1370 662h132" />
               <path d="M1362 702h92l54 54" />
             </g>
+            {/* Steel Circuit Lines */}
             <g className="hero-flow hero-flow-steel" strokeLinecap="round" strokeLinejoin="round">
               <path d="M1090 226v-88l-30-30" />
               <path d="M1130 226v-82l36-36V64" />
@@ -93,193 +105,324 @@ export default function Index() {
               <path d="M730 248 676 194h-86" />
             </g>
           </svg>
+
+          {/* Glowing Red & Blue Sensor Optic Eyes */}
           <div className="hero-eye hero-eye-red" />
           <div className="hero-eye hero-eye-blue" />
           <div className="hero-scan-sweep" />
         </div>
-        <div className="particle-field absolute inset-0 opacity-[0.05]" />
-        <div className="container relative z-10 mx-auto grid items-center gap-12 lg:grid-cols-[2fr_3fr]">
-          <div className="max-w-lg text-left lg:-translate-y-[3%]">
-            <div className="flex flex-wrap items-center gap-x-2 text-sm font-bold uppercase tracking-wider animate-reveal">
+
+        {/* Hero Content Container */}
+        <div className="container relative z-10 mx-auto grid items-center gap-12 lg:grid-cols-[3fr_2fr]">
+          <div className="max-w-2xl text-left space-y-6">
+            {/* Student Engineering Identity Pill */}
+            <div
+              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#081220]/90 border border-cyan-500/40 text-cyan-300 text-xs font-mono tracking-wider backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.25)] select-none"
+              onMouseEnter={() => cyberAudio.playHover()}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
+              </span>
+              <span className="font-bold">CSE (CYBER SECURITY) • PSNA CET</span>
+              <span className="text-zinc-600">|</span>
+              <span className="text-zinc-400">ENGINEERING COLLECTIVE</span>
+            </div>
+
+            {/* Red / Blue Team Indicator */}
+            <div className="flex flex-wrap items-center gap-x-2 text-sm font-bold uppercase tracking-wider">
               <span className="text-[#FF3B30]">Red</span>
               <span className="text-foreground">team.</span>
               <span className="text-[#29A9FF]">Blue</span>
               <span className="text-foreground">team.</span>
+              <span className="text-zinc-500 ml-2">• Full-Stack Developers & Builders</span>
             </div>
 
-            <h1 className="mt-6 text-4xl font-black leading-[1.08] text-foreground md:text-5xl lg:text-6xl">
-              <span className="block">We hunt</span>
-              <span className="block bg-gradient-to-r from-[#FF3B30] via-[#c77bd6] to-[#29A9FF] bg-clip-text text-transparent">
-                vulnerabilities.
+            {/* Monumental Headline */}
+            <h1 className="font-display text-4xl sm:text-6xl font-black text-white leading-[1.06] tracking-tight">
+              ENGINEERING SYSTEMS.
+              <span className="block bg-gradient-to-r from-[#FF3B30] via-cyan-400 to-[#29A9FF] bg-clip-text text-transparent">
+                HUNTING VULNERABILITIES.
               </span>
             </h1>
 
-            <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground md:text-lg">
-              Offensive minds. Defensive strategies. One mission: secure the
-              digital world.
+            {/* Subtitle stating true identity */}
+            <p className="text-base sm:text-lg text-zinc-300 font-sans leading-relaxed max-w-xl">
+              We are a team of CSE (Cyber Security) engineering students who build production software, develop Android apps, compete in hackathons, and win national & international CTF tournaments.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/projects">
-                <Button variant="cyber" size="lg" className="group w-full sm:w-auto">
-                  <Terminal className="h-5 w-5" />
-                  View Engineering Work
-                  <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+              <Link to="/projects" onClick={() => cyberAudio.playClick()}>
+                <button
+                  onMouseEnter={() => cyberAudio.playHover()}
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-between gap-3 px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-mono font-bold text-sm tracking-wide shadow-[0_0_25px_rgba(0,240,255,0.4)] hover:shadow-[0_0_35px_rgba(0,240,255,0.7)] transition-all hover:scale-105"
+                >
+                  <span className="flex items-center gap-2">
+                    <Code className="w-4 h-4" />
+                    VIEW ENGINEERING WORK
+                  </span>
+                  <span className="w-7 h-7 rounded-full bg-black/15 flex items-center justify-center transition-transform group-hover:translate-x-1">
+                    <ChevronRight className="w-4 h-4 text-black" />
+                  </span>
+                </button>
               </Link>
-              <Link to="/members">
-                <Button variant="cyber-secondary" size="lg" className="w-full sm:w-auto">
-                  <Users className="h-5 w-5" />
-                  Meet the Team
-                </Button>
+
+              <Link to="/achievements" onClick={() => cyberAudio.playClick()}>
+                <button
+                  onMouseEnter={() => cyberAudio.playHover()}
+                  className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#081220]/80 border border-amber-500/40 text-amber-300 font-mono text-sm tracking-wide hover:bg-amber-950/40 hover:border-amber-400 transition-all hover:scale-105"
+                >
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                  <span>CHAMPIONSHIPS & CTFS</span>
+                </button>
               </Link>
+
+              <Link to="/members" onClick={() => cyberAudio.playClick()}>
+                <button
+                  onMouseEnter={() => cyberAudio.playHover()}
+                  className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-zinc-900/60 border border-zinc-800 text-zinc-300 font-mono text-sm hover:text-white hover:border-zinc-700 transition-all"
+                >
+                  <Users className="w-4 h-4 text-zinc-400" />
+                  <span>MEET THE TEAM</span>
+                </button>
+              </Link>
+            </div>
+
+            {/* Quick Live Record Bar */}
+            <div className="pt-4 flex items-center gap-2.5 text-xs font-mono text-zinc-400 border-t border-zinc-800/80">
+              <Flame className="w-4 h-4 text-amber-400 animate-pulse" />
+              <span className="text-zinc-300">
+                1st Place $N1PH€RS 3.0 International CTF • 1st Place EXPLOIT-X National CTF • Best Idea Startup Pitch
+              </span>
             </div>
           </div>
 
-          <div className="hidden lg:block" aria-hidden="true" />
+          {/* Right column empty spacer for wolf background visual balance on desktop */}
+          <div className="hidden lg:block min-h-[400px]" aria-hidden="true" />
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="dashboard-panel relative overflow-hidden py-14 md:py-20">
-        <div className="grid-overlay absolute inset-0 opacity-60" />
-        <div className="dashboard-glow absolute inset-0" />
-        <div className="container relative mx-auto px-4">
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 2: DYNAMIC STATS TELEMETRY
+          Fully linked to Supabase site_stats table.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-12 border-y border-cyan-500/15 bg-[#050a14]/75 backdrop-blur-md relative">
+        <div className="container mx-auto px-4 max-w-6xl">
           {statsLoading ? (
-            <div className="text-center">
-              <Terminal className="w-8 h-8 text-primary mx-auto animate-pulse" />
+            <div className="text-center py-4">
+              <Terminal className="w-8 h-8 text-cyan-400 mx-auto animate-pulse" />
             </div>
-          ) : statsForDisplay.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              {statsForDisplay.map((stat, index) => (
-                <Reveal key={stat.label} delay={index * 90}>
-                  <div
-                    className={cn(
-                      "px-4",
-                      index > 0 && "md:border-l md:border-primary/[0.12]"
-                    )}
-                  >
-                    <StatCounter end={stat.value} suffix={stat.suffix} label={stat.label} />
-                  </div>
-                </Reveal>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {displayStats.map((stat, idx) => (
+                <div
+                  key={stat.label}
+                  className="text-center p-4 rounded-xl bg-[#08111e]/50 border border-zinc-800/80 hover:border-cyan-500/40 transition-colors"
+                  onMouseEnter={() => cyberAudio.playHover()}
+                >
+                  <StatCounter end={stat.value} suffix={stat.suffix} label={stat.label} />
+                </div>
               ))}
             </div>
-          ) : null}
+          )}
         </div>
       </section>
 
-      <CircuitDivider className="py-10 md:py-14" />
+      <CircuitDivider className="py-8" />
 
-      {/* Features Section */}
-      <section className="section-shell !pt-0">
-        <div className="container mx-auto">
-          <Reveal className="text-center mb-16">
-            <span className="section-kicker">
-              <Zap className="h-3.5 w-3.5" />
-              Operating domains
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 3: CHAMPIONSHIP PODIUM (100% DYNAMIC FROM SUPABASE)
+          Pulls verified achievements directly from Supabase,
+          ranks them, and displays interactive celebratory effects.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 relative">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <span className="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full uppercase bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold inline-flex items-center gap-1.5 mb-3">
+              <Trophy className="w-3.5 h-3.5" />
+              VERIFIED CHAMPIONSHIPS & AWARDS
             </span>
-            <h2 className="section-title">
-              Engineering, not just cybersecurity.
+            <h2 className="font-display text-3xl sm:text-5xl font-black text-white tracking-tight">
+              Championship Record & Honors
             </h2>
-            <p className="section-copy">
-              Security is the edge, but the team's work spans software, AI,
-              electronics, open-source contribution, and competition-grade builds.
+            <p className="text-zinc-400 mt-3 text-sm sm:text-base font-sans">
+              Our proudest moments across national & international CTF competitions, hackathons, and technical pitch events. Real-time loaded from our database.
             </p>
-          </Reveal>
-
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature, index) => (
-              <Reveal key={feature.title} delay={index * 100}>
-                <CyberCard className="h-full text-left">
-                  <div className="mb-5 h-12 w-12 relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110">
-                    <div className="absolute inset-0 rounded-full bg-primary/15 blur-xl transition-opacity duration-300 group-hover:opacity-80" />
-                    <div className="relative flex h-full w-full items-center justify-center border border-primary/[0.35] bg-background/60 transition-colors duration-300 group-hover:border-primary/70">
-                      <feature.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:rotate-6" />
-                    </div>
-                  </div>
-                  <h3 className="mb-2 font-display text-lg font-bold text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </CyberCard>
-              </Reveal>
-            ))}
           </div>
+
+          <TrophyShowcase achievements={achievements} isLoading={achievementsLoading} />
         </div>
       </section>
 
-      <CircuitDivider className="py-10 md:py-14" />
+      <CircuitDivider className="py-8" />
 
-      {/* Hexagon Showcase */}
-      <section className="section-shell overflow-hidden !pt-0">
-        <div className="container mx-auto">
-          <Reveal className="text-center mb-16">
-            <span className="section-kicker">Quick access</span>
-            <h2 className="section-title">Explore the lab.</h2>
-          </Reveal>
-
-          <div className="flex flex-wrap justify-center gap-5 sm:gap-6 md:gap-8">
-            <Reveal delay={0}>
-              <Link to="/projects">
-                <HexagonCard className="flex h-40 w-32 items-center justify-center sm:h-48 sm:w-40 md:h-56 md:w-48">
-                  <div className="text-center">
-                    <Code className="mx-auto mb-2 h-8 w-8 text-primary transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10 md:h-12 md:w-12" />
-                    <span className="font-display text-sm font-semibold text-foreground sm:text-base">Projects</span>
-                  </div>
-                </HexagonCard>
-              </Link>
-            </Reveal>
-            <Reveal delay={100}>
-              <Link to="/achievements">
-                <HexagonCard className="flex h-40 w-32 items-center justify-center sm:h-48 sm:w-40 md:h-56 md:w-48" glowColor="secondary">
-                  <div className="text-center">
-                    <Trophy className="mx-auto mb-2 h-8 w-8 text-secondary transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10 md:h-12 md:w-12" />
-                    <span className="font-display text-sm font-semibold text-foreground sm:text-base">Achievements</span>
-                  </div>
-                </HexagonCard>
-              </Link>
-            </Reveal>
-            <Reveal delay={200}>
-              <Link to="/members">
-                <HexagonCard className="flex h-40 w-32 items-center justify-center sm:h-48 sm:w-40 md:h-56 md:w-48">
-                  <div className="text-center">
-                    <Users className="mx-auto mb-2 h-8 w-8 text-primary transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10 md:h-12 md:w-12" />
-                    <span className="font-display text-sm font-semibold text-foreground sm:text-base">Members</span>
-                  </div>
-                </HexagonCard>
-              </Link>
-            </Reveal>
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 4: STUDENT ENGINEERING DOMAINS (BENTO GRID)
+          Covers Software/Mobile, Hackathons, Cybersecurity, and AI.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 relative bg-[#040812]/50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-left mb-12">
+            <span className="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full uppercase bg-cyan-950/60 text-cyan-400 border border-cyan-800/60 font-bold inline-flex items-center gap-1.5 mb-2">
+              <Zap className="w-3.5 h-3.5" />
+              CORE OPERATING DOMAINS
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Engineering, Not Just Theory.
+            </h2>
+            <p className="text-zinc-400 mt-2 text-sm sm:text-base font-sans max-w-2xl">
+              We operate across software development, mobile apps, hackathons, offensive security research, and automation.
+            </p>
           </div>
+
+          <DomainsBento />
         </div>
       </section>
 
-      <CircuitDivider className="py-10 md:py-14" />
+      <CircuitDivider className="py-8" />
 
-      {/* CTA Section */}
-      <section className="section-shell !pt-0">
-        <div className="container mx-auto max-w-4xl">
-          <Reveal>
-            <CyberCard variant="glow" className="p-8 text-center md:p-12">
-              <Zap className="mx-auto mb-6 h-14 w-14 text-primary animate-pulse-glow transition-transform duration-500 group-hover:scale-110" />
-              <h2 className="font-display text-3xl font-black text-foreground md:text-4xl">
-                Competition pressure. Production discipline.
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 5: LIVE TACTICAL TERMINAL CLI (DYNAMIC PROPS)
+          Linked with real projects, achievements, and members.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 relative">
+        <div className="container mx-auto max-w-5xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+              <span className="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full uppercase bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold inline-flex items-center gap-1.5 mb-2">
+                <Terminal className="w-3.5 h-3.5" />
+                INTERACTIVE CONSOLE
+              </span>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
+                Live Tactical Terminal
               </h2>
-              <p className="mx-auto mb-8 mt-4 max-w-xl leading-7 text-muted-foreground">
-                Browse achievements from CTFs, hackathons, research, events, and
-                engineering milestones.
+            </div>
+
+            <div className="text-xs font-mono text-zinc-400">
+              Type: <span className="text-cyan-300 font-bold">projects</span>,{" "}
+              <span className="text-cyan-300 font-bold">wins</span>,{" "}
+              <span className="text-cyan-300 font-bold">team</span>,{" "}
+              <span className="text-cyan-300 font-bold">skills</span>
+            </div>
+          </div>
+
+          <CyberTerminal
+            isOpen={true}
+            isFloating={false}
+            projects={projects}
+            achievements={achievements}
+            profiles={profiles}
+            stats={siteStats}
+          />
+        </div>
+      </section>
+
+      <CircuitDivider className="py-8" />
+
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 6: ENGINEERING BLUEPRINTS (100% DYNAMIC)
+          Renders real projects fetched from Supabase.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 relative bg-[#040812]/50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div>
+              <span className="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full uppercase bg-cyan-950/60 text-cyan-400 border border-cyan-800/60 font-bold inline-flex items-center gap-1.5 mb-2">
+                <Code className="w-3.5 h-3.5" />
+                OPEN-SOURCE & RESEARCH
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Engineering Projects & Codebases
+              </h2>
+              <p className="text-zinc-400 mt-2 text-sm max-w-xl font-sans">
+                Real applications, mobile platforms, and research tools built by our team. Dynamically loaded from Supabase.
               </p>
-              <div className="flex justify-center">
-                <Link to="/achievements" className="w-full sm:w-auto">
-                  <Button variant="cyber" size="lg" className="w-full">
-                    <Trophy className="w-5 h-5 mr-2" />
-                    View Achievements
-                  </Button>
+            </div>
+
+            <Link to="/projects" onClick={() => cyberAudio.playClick()}>
+              <Button
+                variant="outline"
+                className="border-cyan-500/40 text-cyan-300 hover:bg-cyan-950/40 font-mono text-xs"
+              >
+                View Full Catalog <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </Link>
+          </div>
+
+          <ProjectsSpotlight projects={projects} isLoading={projectsLoading} />
+        </div>
+      </section>
+
+      <CircuitDivider className="py-8" />
+
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 7: SKILLS & COMPETITIVE MATRIX
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 relative">
+        <div className="container mx-auto max-w-6xl">
+          <SkillsMatrix />
+        </div>
+      </section>
+
+      <CircuitDivider className="py-8" />
+
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION 8: COLLABORATION & COMMUNITY (STUDENT ENGINEERING)
+          Real, sensible student engineering actions without corporate jargon.
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 relative">
+        <div className="container mx-auto max-w-4xl">
+          <div
+            className="rounded-3xl p-8 sm:p-12 bg-gradient-to-b from-cyan-950/40 via-[#070e1c]/90 to-[#02050b] border border-cyan-500/40 text-center relative overflow-hidden backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.8),0_0_50px_rgba(0,240,255,0.15)]"
+            onMouseEnter={() => cyberAudio.playHover()}
+          >
+            <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 space-y-6">
+              <span className="w-16 h-16 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center mx-auto text-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                <Target className="w-8 h-8" />
+              </span>
+
+              <h2 className="font-display text-3xl sm:text-5xl font-black text-white tracking-tight">
+                Let's Build, Hack & Collaborate.
+              </h2>
+
+              <p className="text-zinc-300 text-sm sm:text-base font-sans max-w-xl mx-auto leading-relaxed">
+                We are always excited to collaborate on open-source engineering, compete in upcoming hackathons, partner on CTF events, or brainstorm innovative software ideas.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <a
+                  href="mailto:ragulethicalhacker@gmail.com"
+                  onClick={() => cyberAudio.playClick()}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-cyan-400 text-black font-mono font-bold text-sm tracking-wide hover:bg-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all hover:scale-105"
+                >
+                  <Mail className="w-4 h-4" />
+                  GET IN TOUCH
+                </a>
+
+                <a
+                  href="https://github.com/w0lfexe"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => cyberAudio.playClick()}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-sm hover:text-white hover:border-zinc-700 transition-all"
+                >
+                  <Github className="w-4 h-4" />
+                  BROWSE GITHUB ORG
+                </a>
+
+                <Link to="/members" onClick={() => cyberAudio.playClick()}>
+                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-zinc-900/60 border border-zinc-800 text-zinc-400 font-mono text-sm hover:text-white hover:border-zinc-700 transition-all">
+                    <Users className="w-4 h-4" />
+                    MEET THE OPERATIVES
+                  </button>
                 </Link>
               </div>
-            </CyberCard>
-          </Reveal>
+            </div>
+          </div>
         </div>
       </section>
     </Layout>

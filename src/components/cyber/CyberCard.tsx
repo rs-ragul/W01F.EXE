@@ -6,6 +6,7 @@ interface CyberCardProps {
   className?: string;
   variant?: "default" | "glow" | "terminal";
   style?: CSSProperties;
+  enableTilt?: boolean;
 }
 
 export function CyberCard({
@@ -13,6 +14,7 @@ export function CyberCard({
   className,
   variant = "default",
   style,
+  enableTilt = true,
 }: CyberCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -20,19 +22,37 @@ export function CyberCard({
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
-    card.style.setProperty("--spot-x", `${((e.clientX - rect.left) / rect.width) * 100}%`);
-    card.style.setProperty("--spot-y", `${((e.clientY - rect.top) / rect.height) * 100}%`);
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    card.style.setProperty("--spot-x", `${(x / rect.width) * 100}%`);
+    card.style.setProperty("--spot-y", `${(y / rect.height) * 100}%`);
+
+    if (enableTilt && window.innerWidth > 768) {
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -5;
+      const rotateY = ((x - centerX) / centerX) * 5;
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    }
+  };
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)";
   };
 
   return (
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className={cn(
-        "group relative bg-card/70 backdrop-blur-sm p-6 transition-all duration-300",
-        "border border-primary/20 hover:border-primary/60",
-        "shadow-[0_18px_70px_hsl(220_42%_2%/0.32)]",
-        "hover:-translate-y-1.5 hover:shadow-[0_24px_90px_hsl(220_42%_2%/0.45),0_0_30px_hsl(var(--primary)/0.16)]",
+        "group relative bg-[#070d18]/80 backdrop-blur-md p-6 transition-transform duration-200 ease-out",
+        "border border-cyan-500/20 hover:border-cyan-400/60",
+        "shadow-[0_18px_70px_hsl(220_42%_2%/0.4)]",
+        "hover:shadow-[0_24px_90px_rgba(0,240,255,0.15)]",
         variant === "glow" && "cyber-glow",
         variant === "terminal" && "font-mono",
         className
@@ -40,36 +60,34 @@ export function CyberCard({
       style={{
         clipPath:
           "polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px))",
+        willChange: "transform",
         ...style,
       }}
     >
-      {/* Mouse spotlight */}
+      {/* Specular light spot */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background:
-            "radial-gradient(circle 200px at var(--spot-x, 50%) var(--spot-y, 50%), hsl(var(--primary) / 0.14), transparent 70%)",
+            "radial-gradient(circle 220px at var(--spot-x, 50%) var(--spot-y, 50%), rgba(0, 240, 255, 0.12), transparent 70%)",
         }}
       />
 
-      {/* Border shimmer sweep on hover */}
-      <div className="border-shimmer" />
-
-      {/* Corner decorations */}
-      <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-primary/[0.55] transition-colors duration-300 group-hover:border-primary" />
-      <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-primary/[0.55] transition-colors duration-300 group-hover:border-primary" />
-      <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-primary/[0.55] transition-colors duration-300 group-hover:border-primary" />
-      <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-primary/[0.55] transition-colors duration-300 group-hover:border-primary" />
+      {/* Corner brackets */}
+      <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400/60 transition-colors duration-300 group-hover:border-cyan-400" />
+      <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-cyan-400/60 transition-colors duration-300 group-hover:border-cyan-400" />
+      <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-cyan-400/60 transition-colors duration-300 group-hover:border-cyan-400" />
+      <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-400/60 transition-colors duration-300 group-hover:border-cyan-400" />
 
       {variant === "terminal" && (
-        <div className="absolute top-2 left-4 flex gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-destructive/80" />
+        <div className="absolute top-2.5 left-4 flex gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-red-500/80" />
           <div className="w-2 h-2 rounded-full bg-yellow-500/80" />
-          <div className="w-2 h-2 rounded-full bg-secondary/80" />
+          <div className="w-2 h-2 rounded-full bg-emerald-500/80" />
         </div>
       )}
 
-      <div className={cn("relative z-10", variant === "terminal" && "mt-4")}>{children}</div>
+      <div className={cn("relative z-10", variant === "terminal" && "mt-3")}>{children}</div>
     </div>
   );
 }
