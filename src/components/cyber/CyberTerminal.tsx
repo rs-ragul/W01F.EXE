@@ -340,7 +340,7 @@ export function CyberTerminal({
     <div
       className={`bg-[#060b14]/95 border border-cyan-500/30 rounded-xl overflow-hidden shadow-2xl backdrop-blur-xl transition-all duration-300 flex flex-col ${
         isFloating
-          ? "fixed bottom-6 right-6 z-50 w-[94vw] sm:w-[580px] max-h-[80vh] shadow-[0_20px_80px_rgba(0,240,255,0.25)]"
+          ? "fixed bottom-20 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 z-50 sm:w-[580px] max-h-[75vh] shadow-[0_20px_80px_rgba(0,240,255,0.25)]"
           : isExpanded
           ? "w-full h-[600px]"
           : "w-full h-[450px]"

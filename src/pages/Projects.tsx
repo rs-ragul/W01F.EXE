@@ -75,7 +75,7 @@ export default function Projects() {
                 SYSTEMS ARCHITECTURE & TOOLS
               </span>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-black text-white mb-4">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">
               <span className="text-cyan-400">&lt;</span>
               Engineering Blueprints
               <span className="text-cyan-400">/&gt;</span>

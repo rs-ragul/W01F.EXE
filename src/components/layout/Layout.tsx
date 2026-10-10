@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react";
 import { Navbar } from "./Navbar";
-import { TelemetryHud } from "@/components/cyber/TelemetryHud";
 import { CyberCanvas } from "@/components/cyber/CyberCanvas";
 import { CyberTerminal } from "@/components/cyber/CyberTerminal";
 import { MobileBottomDock } from "./MobileBottomDock";
@@ -36,14 +35,11 @@ export function Layout({ children }: LayoutProps) {
       <div className="fixed top-1/2 right-1/10 h-[30rem] w-[30rem] bg-red-500/[0.05] rounded-full blur-[160px] pointer-events-none" />
       <div className="fixed bottom-0 left-1/3 h-[32rem] w-[32rem] bg-blue-600/[0.06] rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Top Telemetry Ticker HUD */}
-      <TelemetryHud />
-
-      {/* Floating Tactical Navbar */}
+      {/* Floating Tactical Navbar with Integrated Telemetry HUD */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} />
 
-      {/* Main Content Area */}
-      <main className="relative z-10 flex-1 pt-20 md:pt-24 pb-20 md:pb-12">
+      {/* Main Content Area: Responsive Top & Bottom padding preventing any dock or navbar overlap */}
+      <main className="relative z-10 flex-1 pt-24 sm:pt-28 pb-28 md:pb-16 w-full max-w-full overflow-x-hidden">
         {children}
       </main>
 

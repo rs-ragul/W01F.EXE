@@ -18,7 +18,8 @@ export function MobileBottomDock({ onOpenTerminal }: MobileBottomDockProps) {
 
   return (
     <nav
-      className="md:hidden fixed bottom-3 left-3 right-3 z-50 bg-[#060b14]/90 border border-cyan-500/30 rounded-2xl p-1.5 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(0,240,255,0.15)] select-none"
+      className="md:hidden fixed left-3 right-3 z-50 bg-[#060b14]/95 border border-cyan-500/30 rounded-2xl p-1.5 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.85),0_0_20px_rgba(0,240,255,0.15)] select-none"
+      style={{ bottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       aria-label="Mobile Navigation Dock"
     >
       <div className="grid grid-cols-5 gap-1">

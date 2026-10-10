@@ -47,7 +47,7 @@ export default function Members() {
                 TACTICAL ROSTER // AGENTS & LEADS
               </span>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-black text-white mb-4">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">
               <span className="text-cyan-400">@</span> Operatives & Researchers
             </h1>
             <p className="text-zinc-400 max-w-2xl mx-auto font-sans text-sm sm:text-base">

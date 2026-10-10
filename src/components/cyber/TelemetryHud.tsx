@@ -32,20 +32,20 @@ export function TelemetryHud() {
 
   return (
     <div
-      className="w-full bg-[#030712]/90 border-b border-cyan-500/15 backdrop-blur-md text-[11px] font-mono tracking-wider text-muted-foreground select-none overflow-x-auto no-scrollbar py-1 px-4 z-40 relative"
+      className="w-full bg-[#030712]/95 border-b border-cyan-500/15 backdrop-blur-md text-[10px] sm:text-[11px] font-mono tracking-wider text-muted-foreground select-none py-1 px-3 sm:px-4 z-40"
       onMouseEnter={() => cyberAudio.playHover()}
     >
-      <div className="container mx-auto flex items-center justify-between gap-4 whitespace-nowrap min-w-max">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 overflow-hidden">
         {/* Left Telemetry */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <div className="flex items-center gap-1.5 text-cyan-400">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
             <span className="font-semibold text-emerald-400">SYS.ONLINE</span>
-            <span className="text-muted-foreground/40">|</span>
-            <span className="text-zinc-400">NODE: W01F-PRIME</span>
+            <span className="text-zinc-600 hidden xs:inline">|</span>
+            <span className="text-zinc-400 hidden xs:inline text-[9px] sm:text-[10px]">W01F-PRIME</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-1.5 text-zinc-400">
@@ -55,24 +55,24 @@ export function TelemetryHud() {
 
           <div className="hidden md:flex items-center gap-1.5 text-zinc-400">
             <Activity className="w-3 h-3 text-emerald-400" />
-            <span>DEFCON 4 [TACTICAL LAB]</span>
+            <span>DEFCON 4</span>
           </div>
         </div>
 
         {/* Right Telemetry */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <div className="hidden lg:flex items-center gap-1.5 text-zinc-400">
             <ShieldAlert className="w-3 h-3 text-red-400" />
-            <span>CHAMPIONS: $N1PH€RS 3.0 // EXPLOIT-X</span>
+            <span>$N1PH€RS 3.0 // EXPLOIT-X</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-cyan-400">
-            <Wifi className="w-3 h-3 text-cyan-400" />
-            <span>RTT: {ping}ms</span>
+          <div className="flex items-center gap-1 text-cyan-400">
+            <Wifi className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-cyan-400" />
+            <span className="text-[9px] sm:text-[10px]">RTT: {ping}ms</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-zinc-300 font-bold bg-cyan-950/40 border border-cyan-800/40 px-2 py-0.5 rounded">
-            <Clock className="w-3 h-3 text-cyan-400" />
+          <div className="flex items-center gap-1 text-zinc-300 font-bold bg-cyan-950/40 border border-cyan-800/40 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px]">
+            <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-cyan-400" />
             <span>{time || "00:00:00"} IST</span>
           </div>
         </div>

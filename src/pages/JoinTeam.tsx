@@ -133,7 +133,7 @@ export default function JoinTeam() {
                 OPERATIVE RECRUITMENT PORTAL
               </span>
             </div>
-            <h1 className="font-display text-4xl sm:text-5xl font-black text-white mb-4">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">
               Join the <span className="text-cyan-400">w0lf.exe</span> Collective
             </h1>
             <p className="text-zinc-400 max-w-2xl mx-auto font-sans text-sm sm:text-base leading-relaxed">
@@ -194,7 +194,7 @@ export default function JoinTeam() {
           ) : (
             /* Application Form */
             <div className="rounded-3xl p-1 bg-gradient-to-b from-cyan-500/20 via-zinc-800/20 to-transparent border border-cyan-500/30 backdrop-blur-2xl shadow-2xl">
-              <form onSubmit={handleSubmit} className="rounded-[calc(1.5rem-2px)] bg-[#070d18]/95 p-6 sm:p-10 space-y-8">
+              <form onSubmit={handleSubmit} className="rounded-[calc(1.5rem-2px)] bg-[#070d18]/95 p-4 sm:p-8 md:p-10 space-y-6 sm:space-y-8">
                 {/* Section 1: Candidate Identity */}
                 <div className="space-y-4">
                   <h3 className="font-mono text-xs uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-2">
