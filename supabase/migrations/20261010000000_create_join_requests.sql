@@ -1,6 +1,6 @@
 -- Create join_requests table for candidate team applications
 CREATE TABLE IF NOT EXISTS public.join_requests (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id TEXT PRIMARY KEY,
     full_name TEXT NOT NULL,
     email TEXT NOT NULL,
     phone TEXT,
@@ -28,6 +28,13 @@ CREATE POLICY "Allow public insert to join_requests"
     FOR INSERT
     TO public
     WITH CHECK (true);
+
+-- Allow public anyone to track their application status by ID or email
+CREATE POLICY "Allow public select for tracking by id"
+    ON public.join_requests
+    FOR SELECT
+    TO public
+    USING (true);
 
 -- Allow authenticated admins to view, review, and manage join requests
 CREATE POLICY "Allow admin full access to join_requests"

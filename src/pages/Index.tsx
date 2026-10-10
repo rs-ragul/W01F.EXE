@@ -71,8 +71,8 @@ export default function Index() {
         {/* User's Exact Hero Wolf Background Image */}
         <div className="hero-home-bg absolute inset-0" />
 
-        {/* Cinematic Gradient Overlays for High Legibility (Vertical on mobile, Horizontal on desktop) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#030712]/95 via-[#030712]/85 to-[#030712]/95 lg:bg-[linear-gradient(90deg,hsl(220_24%_5%/0.96)_0%,hsl(220_24%_5%/0.85)_40%,hsl(220_24%_5%/0.35)_70%,transparent_100%)] pointer-events-none" />
+        {/* Cinematic Gradient Overlays: Keeps authentic wolf image 100% visible while preserving text readability */}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,7,18,0.92)_0%,rgba(3,7,18,0.72)_42%,rgba(3,7,18,0.22)_76%,transparent_100%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_44%,rgba(0,240,255,0.08),transparent_50%)] pointer-events-none" />
 
         {/* Kinetic Animated Circuit Stream Lines & Optic Sensors */}
@@ -139,10 +139,12 @@ export default function Index() {
               <span className="text-zinc-400 text-xs sm:text-sm">• Software Builders & CTF Champs</span>
             </div>
 
-            {/* Monumental Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight break-words">
-              ENGINEERING SYSTEMS.
-              <span className="block text-cyan-400 sm:text-transparent sm:bg-clip-text sm:bg-gradient-to-r sm:from-[#FF3B30] sm:via-cyan-400 sm:to-[#29A9FF] mt-1 drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+            {/* Monumental Headline: Perfectly Aligned & Balanced on All Screen Sizes */}
+            <h1 className="font-display font-black tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+              <span className="block text-[1.4rem] xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-tight">
+                ENGINEERING SYSTEMS.
+              </span>
+              <span className="block text-[1.4rem] xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-cyan-400 sm:text-transparent sm:bg-clip-text sm:bg-gradient-to-r sm:from-[#FF3B30] sm:via-cyan-400 sm:to-[#29A9FF] mt-1 sm:mt-2 leading-tight drop-shadow-[0_0_25px_rgba(0,240,255,0.4)]">
                 HUNTING VULNERABILITIES.
               </span>
             </h1>

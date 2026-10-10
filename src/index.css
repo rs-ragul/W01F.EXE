@@ -308,15 +308,20 @@
 
   @media (max-width: 1023px) {
     .hero-home-bg {
-      /* On mobile & tablet: Center the atmospheric wolf artwork with soft opacity
-         so text has 100% pristine contrast and zero visual clash */
-      background-position: center 30%;
-      opacity: 0.38;
-      animation: none; /* Keep still on mobile for battery and rendering smoothness */
+      /* Keep the user's authentic hero wolf artwork clearly visible and centered */
+      background-position: 82% center;
+      opacity: 0.95;
+      animation: hero-bg-drift 14s ease-in-out infinite;
     }
 
-    .hero-wolf-activity {
-      display: none; /* Hide optical circuit wires over mobile text */
+    .hero-eye-red {
+      left: 68%;
+      top: 44.8%;
+    }
+
+    .hero-eye-blue {
+      left: 80%;
+      top: 45%;
     }
   }
 

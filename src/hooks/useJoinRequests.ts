@@ -23,7 +23,7 @@ export interface JoinRequest {
 const STORAGE_KEY = "w0lf_team_join_requests";
 
 // Helper to read cached/fallback requests
-function getLocalRequests(): JoinRequest[] {
+export function getLocalRequests(): JoinRequest[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -34,7 +34,7 @@ function getLocalRequests(): JoinRequest[] {
 }
 
 // Helper to save requests
-function saveLocalRequests(requests: JoinRequest[]) {
+export function saveLocalRequests(requests: JoinRequest[]) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
@@ -76,6 +76,43 @@ export function useJoinRequests() {
   });
 }
 
+// Search/track a specific application by ID or Email
+export async function trackApplicationByIdOrEmail(queryStr: string): Promise<JoinRequest | null> {
+  const trimmed = queryStr.trim().toLowerCase();
+  if (!trimmed) return null;
+
+  // 1. Check local cache first
+  const local = getLocalRequests();
+  const localMatch = local.find(
+    (r) =>
+      r.id.toLowerCase() === trimmed ||
+      r.id.toLowerCase().startsWith(trimmed) ||
+      r.email.toLowerCase() === trimmed
+  );
+
+  // 2. Query Supabase
+  try {
+    // Check by exact id or email
+    const { data, error } = await supabase
+      .from("join_requests" as any)
+      .select("*")
+      .or(`id.eq.${trimmed},email.eq.${trimmed}`)
+      .limit(1);
+
+    if (!error && data && data.length > 0) {
+      const match = data[0] as JoinRequest;
+      // Sync into local cache
+      const existing = local.filter((r) => r.id !== match.id);
+      saveLocalRequests([match, ...existing]);
+      return match;
+    }
+  } catch {
+    // Supabase error or table not yet migrated, fall through to local
+  }
+
+  return localMatch || null;
+}
+
 export function useSubmitJoinRequest() {
   const queryClient = useQueryClient();
 
@@ -83,9 +120,11 @@ export function useSubmitJoinRequest() {
     mutationFn: async (
       payload: Omit<JoinRequest, "id" | "status" | "created_at">
     ): Promise<JoinRequest> => {
+      // Generate clean uppercase tactical ID e.g. W0LF-2026-X8F9
+      const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
       const newRequest: JoinRequest = {
         ...payload,
-        id: crypto.randomUUID ? crypto.randomUUID() : `app_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        id: `W0LF-2026-${randomSuffix}`,
         status: "pending",
         created_at: new Date().toISOString(),
       };
@@ -115,7 +154,7 @@ export function useSubmitJoinRequest() {
           created_at: newRequest.created_at,
         });
       } catch {
-        // Ignore Supabase error if table doesn't exist yet
+        // Ignore Supabase error if table schema difference
       }
 
       return newRequest;
