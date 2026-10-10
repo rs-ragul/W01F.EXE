@@ -157,6 +157,11 @@ export function Layout({ children }: LayoutProps) {
                     › Operatives Roster
                   </Link>
                 </li>
+                <li>
+                  <Link to="/join" className="text-emerald-400 hover:text-emerald-300 font-bold transition-colors">
+                    › Recruitment / Join Team
+                  </Link>
+                </li>
               </ul>
             </div>
 

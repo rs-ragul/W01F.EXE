@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/projects", label: "Projects" },
   { href: "/achievements", label: "Achievements" },
   { href: "/members", label: "Members" },
+  { href: "/join", label: "Join Us" },
 ];
 
 interface NavbarProps {

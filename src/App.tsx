@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SeoManager } from "@/components/seo/SeoManager";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Projects from "./pages/Projects";
@@ -16,6 +17,7 @@ import Members from "./pages/Members";
 import MemberProfile from "./pages/MemberProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import MemberDashboard from "./pages/MemberDashboard";
+import JoinTeam from "./pages/JoinTeam";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,10 +29,13 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <SeoManager />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/join" element={<JoinTeam />} />
+            <Route path="/apply" element={<JoinTeam />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/achievements" element={<Achievements />} />

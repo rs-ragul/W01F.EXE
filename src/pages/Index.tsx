@@ -32,6 +32,7 @@ import {
   Cpu,
   Mail,
   Github,
+  UserPlus,
 } from "lucide-react";
 
 export default function Index() {
@@ -185,6 +186,16 @@ export default function Index() {
                 >
                   <Users className="w-4 h-4 text-zinc-400" />
                   <span>MEET THE TEAM</span>
+                </button>
+              </Link>
+
+              <Link to="/join" onClick={() => cyberAudio.playClick()}>
+                <button
+                  onMouseEnter={() => cyberAudio.playHover()}
+                  className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-emerald-950/40 border border-emerald-500/50 text-emerald-300 font-mono text-sm hover:bg-emerald-900/50 hover:border-emerald-400 transition-all hover:scale-105 shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+                >
+                  <UserPlus className="w-4 h-4 text-emerald-400" />
+                  <span>JOIN THE TEAM</span>
                 </button>
               </Link>
             </div>
@@ -402,6 +413,13 @@ export default function Index() {
                   <Mail className="w-4 h-4" />
                   GET IN TOUCH
                 </a>
+
+                <Link to="/join" onClick={() => cyberAudio.playClick()}>
+                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-mono font-bold text-sm tracking-wide hover:bg-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:scale-105">
+                    <UserPlus className="w-4 h-4" />
+                    JOIN THE PACK
+                  </button>
+                </Link>
 
                 <a
                   href="https://github.com/w0lfexe"

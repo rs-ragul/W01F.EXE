@@ -68,8 +68,16 @@ export function CyberTerminal({
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const isFirstMount = useRef(true);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    if (bottomRef.current?.parentElement) {
+      bottomRef.current.parentElement.scrollTop = bottomRef.current.parentElement.scrollHeight;
+    }
   }, [history]);
 
   useEffect(() => {
