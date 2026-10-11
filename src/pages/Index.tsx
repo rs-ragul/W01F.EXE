@@ -114,11 +114,11 @@ export default function Index() {
         </div>
 
         {/* Hero Content Container */}
-        <div className="container relative z-10 mx-auto grid items-center gap-10 lg:grid-cols-[3fr_2fr]">
-          <div className="max-w-2xl text-left space-y-5 sm:space-y-6">
+        <div className="container relative z-10 mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-12 min-w-0 w-full">
+          <div className="min-w-0 w-full max-w-2xl text-left space-y-4 sm:space-y-6">
             {/* Student Engineering Identity Pill */}
             <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#081220]/90 border border-cyan-500/40 text-cyan-300 text-[11px] sm:text-xs font-mono tracking-wider backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.25)] select-none max-w-full"
+              className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-full bg-[#081220]/90 border border-cyan-500/40 text-cyan-300 text-[11px] sm:text-xs font-mono tracking-wider backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.25)] select-none max-w-full"
               onMouseEnter={() => cyberAudio.playHover()}
             >
               <span className="relative flex h-2 w-2 shrink-0">
@@ -139,38 +139,34 @@ export default function Index() {
               <span className="text-zinc-400 text-xs sm:text-sm">• Software Builders & CTF Champs</span>
             </div>
 
-            {/* Monumental Headline: Perfectly Aligned & Balanced on All Screen Sizes */}
-            <h1 className="font-display font-black tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-              <span className="block text-[1.4rem] xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-tight">
-                ENGINEERING SYSTEMS.
-              </span>
-              <span className="block text-[1.4rem] xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-cyan-400 sm:text-transparent sm:bg-clip-text sm:bg-gradient-to-r sm:from-[#FF3B30] sm:via-cyan-400 sm:to-[#29A9FF] mt-1 sm:mt-2 leading-tight drop-shadow-[0_0_25px_rgba(0,240,255,0.4)]">
-                HUNTING VULNERABILITIES.
-              </span>
+            {/* Monumental Headline: Fluid & Naturally Wrapping at Any Screen Width */}
+            <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black tracking-tight leading-[1.15] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] break-words">
+              <span className="text-white">ENGINEERING SYSTEMS.</span>{" "}
+              <span className="text-cyan-400">HUNTING VULNERABILITIES.</span>
             </h1>
 
             {/* Subtitle stating true identity */}
-            <p className="text-sm sm:text-base md:text-lg text-zinc-300 font-sans leading-relaxed max-w-xl">
+            <p className="text-xs sm:text-base text-zinc-300 font-sans leading-relaxed max-w-xl">
               We are a team of CSE (Cyber Security) engineering students who build production software, develop Android apps, compete in hackathons, and win national & international CTF tournaments.
             </p>
 
-            {/* Action Buttons: Responsive 2-Col Grid on Mobile, Flex on Desktop */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 max-w-lg">
-              <Link to="/projects" onClick={() => cyberAudio.playClick()} className="w-full">
+            {/* Action Buttons: Responsive & Flex-Wrapping */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link to="/projects" onClick={() => cyberAudio.playClick()} className="w-full sm:w-auto">
                 <button
                   onMouseEnter={() => cyberAudio.playHover()}
-                  className="w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-mono font-bold text-xs sm:text-sm tracking-wide shadow-[0_0_20px_rgba(0,240,255,0.35)] hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-mono font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(0,240,255,0.35)] hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all hover:scale-105 active:scale-95"
                 >
                   <Code className="w-4 h-4 shrink-0" />
-                  <span>VIEW ENGINEERING WORK</span>
-                  <ChevronRight className="w-3.5 h-3.5 shrink-0 ml-auto hidden sm:block" />
+                  <span>VIEW PROJECTS</span>
+                  <ChevronRight className="w-3.5 h-3.5 shrink-0" />
                 </button>
               </Link>
 
-              <Link to="/join" onClick={() => cyberAudio.playClick()} className="w-full">
+              <Link to="/join" onClick={() => cyberAudio.playClick()} className="w-full sm:w-auto">
                 <button
                   onMouseEnter={() => cyberAudio.playHover()}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 font-mono font-bold text-xs sm:text-sm tracking-wide hover:bg-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.25)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-950/70 border border-emerald-400/60 text-emerald-300 font-mono font-bold text-xs sm:text-sm tracking-wider uppercase hover:bg-emerald-900/70 hover:border-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all hover:scale-105 active:scale-95"
                 >
                   <UserPlus className="w-4 h-4 shrink-0 text-emerald-400" />
                   <span>JOIN THE PACK</span>
@@ -178,37 +174,35 @@ export default function Index() {
               </Link>
             </div>
 
-            {/* Secondary Action Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <Link to="/achievements" onClick={() => cyberAudio.playClick()}>
+            {/* Secondary Action Chips: Flex-Wrapping */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <Link to="/achievements" onClick={() => cyberAudio.playClick()} className="flex-1 sm:flex-none">
                 <button
                   onMouseEnter={() => cyberAudio.playHover()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#081220]/80 border border-amber-500/40 text-amber-300 font-mono text-xs tracking-wide hover:bg-amber-950/40 hover:border-amber-400 transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#081220]/90 border border-amber-500/40 text-amber-300 font-mono text-xs tracking-wide hover:bg-amber-950/40 hover:border-amber-400 transition-all"
                 >
                   <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                  <span>CTF CHAMPIONSHIPS</span>
+                  <span>CTF WINS</span>
                 </button>
               </Link>
 
-              <Link to="/members" onClick={() => cyberAudio.playClick()}>
+              <Link to="/members" onClick={() => cyberAudio.playClick()} className="flex-1 sm:flex-none">
                 <button
                   onMouseEnter={() => cyberAudio.playHover()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900/70 border border-zinc-800 text-zinc-300 font-mono text-xs hover:text-white hover:border-zinc-700 transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-zinc-900/80 border border-zinc-800 text-zinc-300 font-mono text-xs tracking-wide hover:text-white hover:border-zinc-700 transition-all"
                 >
                   <Users className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>OPERATIVES ROSTER</span>
+                  <span>OPERATIVES</span>
                 </button>
               </Link>
             </div>
 
-            {/* Quick Live Record Bar */}
-            <div className="pt-3 flex items-center gap-2 text-[11px] sm:text-xs font-mono text-zinc-400 border-t border-zinc-800/80 overflow-hidden">
+            {/* Quick Live Record Bar: Fluid & Naturally Wrapping */}
+            <div className="pt-3 flex flex-wrap items-center gap-2 text-[11px] sm:text-xs font-mono text-zinc-400 border-t border-zinc-800/80">
               <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse shrink-0" />
-              <div className="overflow-x-auto no-scrollbar whitespace-nowrap py-0.5">
-                <span className="text-zinc-300">
-                  1st Place $N1PH€RS 3.0 International CTF • 1st Place EXPLOIT-X National CTF • Best Idea Startup Pitch
-                </span>
-              </div>
+              <span className="text-zinc-300">
+                1st Place $N1PH€RS 3.0 International CTF • 1st Place EXPLOIT-X National CTF • Best Idea Startup Pitch
+              </span>
             </div>
           </div>
 
