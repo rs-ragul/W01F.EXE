@@ -419,7 +419,7 @@ export default function Index() {
                 </Link>
 
                 <a
-                  href="https://github.com/w0lfexe"
+                  href="https://github.com/W01F-EXE"
                   target="_blank"
                   rel="noreferrer"
                   onClick={() => cyberAudio.playClick()}

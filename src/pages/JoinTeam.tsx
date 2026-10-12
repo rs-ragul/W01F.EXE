@@ -388,7 +388,7 @@ export default function JoinTeam() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="space-y-1.5">
                         <Label htmlFor="phone" className="text-xs font-mono text-zinc-300">
-                          Phone / Telegram
+                          Phone / WhatsApp
                         </Label>
                         <Input
                           id="phone"

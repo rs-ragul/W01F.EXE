@@ -80,8 +80,8 @@ export function SeoManager() {
       url: SITE_URL,
       logo: LOGO_URL,
       sameAs: [
-        "https://github.com/w0lfexe",
-        "https://www.linkedin.com/company/w0lfexe",
+        "https://github.com/W01F-EXE",
+        "https://www.linkedin.com/in/t3am-w01f",
         "https://x.com/w0lfexe",
       ],
       description: DEFAULT_DESCRIPTION,

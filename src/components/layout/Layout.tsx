@@ -3,7 +3,7 @@ import { Navbar } from "./Navbar";
 import { CyberCanvas } from "@/components/cyber/CyberCanvas";
 import { CyberTerminal } from "@/components/cyber/CyberTerminal";
 import { MobileBottomDock } from "./MobileBottomDock";
-import { Shield, Github, Linkedin, Twitter, Terminal, Heart, Globe, Radio } from "lucide-react";
+import { Shield, Github, Linkedin, Terminal, Heart, Globe, Radio } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cyberAudio } from "@/lib/cyberAudio";
 import { useProjects } from "@/hooks/useProjects";
@@ -90,7 +90,7 @@ export function Layout({ children }: LayoutProps) {
 
               <div className="flex items-center gap-3 pt-2">
                 <a
-                  href="https://github.com/w0lfexe"
+                  href="https://github.com/W01F-EXE"
                   target="_blank"
                   rel="noreferrer"
                   className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
@@ -99,7 +99,7 @@ export function Layout({ children }: LayoutProps) {
                   <Github className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://www.linkedin.com/company/w0lfexe"
+                  href="https://www.linkedin.com/in/t3am-w01f"
                   target="_blank"
                   rel="noreferrer"
                   className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
@@ -108,13 +108,13 @@ export function Layout({ children }: LayoutProps) {
                   <Linkedin className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://x.com/w0lfexe"
+                  href="https://ctftime.org/team/442592/"
                   target="_blank"
                   rel="noreferrer"
                   className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
-                  aria-label="Twitter / X"
+                  aria-label="CTFTime"
                 >
-                  <Twitter className="w-4 h-4" />
+                  <Globe className="w-4 h-4" />
                 </a>
                 <button
                   onClick={() => setIsTerminalOpen(true)}
