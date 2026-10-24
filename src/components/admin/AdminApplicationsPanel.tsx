@@ -60,8 +60,21 @@ import {
   Filter,
   Shield,
   KeyRound,
+  Copy,
+  Check,
+  Send,
+  X,
 } from "lucide-react";
 import { cyberAudio } from "@/lib/cyberAudio";
+import {
+  buildMailtoLink,
+  buildGmailComposeUrl,
+  buildOutlookComposeUrl,
+  buildApprovalBody,
+  buildApprovalSubject,
+  getLoginUrl,
+  type ApprovalMailData,
+} from "@/lib/approvalMail";
 
 const statusBadges: Record<string, { label: string; class: string }> = {
   pending: { label: "PENDING", class: "bg-amber-500/20 text-amber-300 border-amber-500/40" },
@@ -92,6 +105,12 @@ export function AdminApplicationsPanel() {
   });
   const [isOnboardingLoading, setIsOnboardingLoading] = useState(false);
 
+  // Post-approval email state — shows fallback banner if mailto is blocked
+  const [emailDraft, setEmailDraft] = useState<ApprovalMailData | null>(null);
+  const [showEmailBanner, setShowEmailBanner] = useState(false);
+  const [copiedBody, setCopiedBody] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
+
   const filteredApps = (applications || []).filter((app) => {
     const matchesFilter = filterStatus === "all" || app.status === filterStatus;
     const query = searchQuery.toLowerCase();
@@ -116,6 +135,54 @@ export function AdminApplicationsPanel() {
       team_role: app.roles && app.roles.length > 0 ? app.roles[0] : "Operative",
     });
     setIsReviewOpen(true);
+  };
+
+  // Helper: trigger approval email (mailto) — opens default mail client with pre-filled To/Subject/Body
+  const triggerApprovalEmail = (data: ApprovalMailData) => {
+    try {
+      const mailtoLink = buildMailtoLink(data);
+      // Use window.open so we don't navigate away from admin dashboard; popup-blocker safe because called on user click
+      const win = window.open(mailtoLink, "_blank");
+      if (!win) {
+        // Popup blocked — fallback to direct navigation (still triggers OS mail client on most browsers)
+        window.location.href = mailtoLink;
+      }
+    } catch (e) {
+      console.error("Failed to open mail client:", e);
+    }
+  };
+
+  const handleOpenMailApp = () => {
+    if (!emailDraft) return;
+    cyberAudio.playClick();
+    triggerApprovalEmail(emailDraft);
+  };
+  const handleOpenGmail = () => {
+    if (!emailDraft) return;
+    cyberAudio.playClick();
+    window.open(buildGmailComposeUrl(emailDraft), "_blank");
+  };
+  const handleOpenOutlook = () => {
+    if (!emailDraft) return;
+    cyberAudio.playClick();
+    window.open(buildOutlookComposeUrl(emailDraft), "_blank");
+  };
+  const handleCopyEmailBody = async () => {
+    if (!emailDraft) return;
+    cyberAudio.playClick();
+    const body = buildApprovalBody(emailDraft);
+    await navigator.clipboard.writeText(body);
+    setCopiedBody(true);
+    setTimeout(() => setCopiedBody(false), 2000);
+    toast({ title: "Email Body Copied", description: "Paste into any email client to send." });
+  };
+  const handleCopyPassword = async () => {
+    if (!emailDraft) return;
+    cyberAudio.playClick();
+    await navigator.clipboard.writeText(emailDraft.password);
+    setCopiedPassword(true);
+    setTimeout(() => setCopiedPassword(false), 2000);
+    toast({ title: "Password Copied", description: "Temporary password copied to clipboard." });
   };
 
   const handleCreateMemberFromApp = async () => {
@@ -168,10 +235,29 @@ export function AdminApplicationsPanel() {
         status: "approved",
       });
 
+      // ── Build approval email data BEFORE closing dialog ──
+      const approvalMailData: ApprovalMailData = {
+        requestId: selectedApp.id,
+        candidateName: selectedApp.full_name,
+        candidateEmail: onboardData.email,
+        password: onboardData.password,
+        teamRole: onboardData.team_role,
+        department: onboardData.department,
+        loginUrl: getLoginUrl(),
+      };
+
       toast({
         title: "Member Successfully Onboarded!",
-        description: `${selectedApp.full_name} (${onboardData.email}) approved as ${onboardData.team_role}.`,
+        description: `${selectedApp.full_name} (${onboardData.email}) approved as ${onboardData.team_role}. Opening email draft…`,
       });
+
+      // Store draft for fallback banner (copy, Gmail, Outlook)
+      setEmailDraft(approvalMailData);
+      setShowEmailBanner(true);
+
+      // Auto-redirect to mail client with pre-filled To / Subject / Body
+      // This satisfies: "redirect to mail.. write mail to that member email.. auto fill"
+      triggerApprovalEmail(approvalMailData);
 
       setIsReviewOpen(false);
       refetch();
@@ -250,6 +336,111 @@ export function AdminApplicationsPanel() {
           </span>
         )}
       </div>
+
+      {/* Success Email Banner — shown after approval with auto-filled mail */}
+      {showEmailBanner && emailDraft && (
+        <div className="mb-6 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xl p-4 space-y-3 animate-fade-in">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
+                <Send className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div>
+                <h4 className="font-display font-bold text-emerald-300 text-sm flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Member Approved — Email Draft Ready
+                </h4>
+                <p className="text-xs font-mono text-emerald-200/80 mt-1">
+                  Approval for <span className="text-white font-bold">{emailDraft.candidateName}</span>{" "}
+                  (<span className="text-cyan-300">{emailDraft.candidateEmail}</span>) — Request{" "}
+                  <span className="text-amber-300 font-bold">{emailDraft.requestId}</span> has been sent to your default mail app with pre-filled To, Subject, and credentials. If it didn’t open, use the buttons below.
+                </p>
+                <div className="mt-2 p-2.5 rounded-lg bg-black/40 border border-emerald-800/30 font-mono text-[11px] space-y-1">
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-zinc-500">To:</span> <span className="text-white">{emailDraft.candidateEmail}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-zinc-500">Subject:</span> <span className="text-white">{buildApprovalSubject(emailDraft)}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-zinc-500">Login:</span> <span className="text-emerald-300">{emailDraft.loginUrl}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-500">Password:</span> <span className="text-amber-300 font-bold">{emailDraft.password}</span>
+                    <button
+                      onClick={handleCopyPassword}
+                      className="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] flex items-center gap-1"
+                    >
+                      {copiedPassword ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      {copiedPassword ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowEmailBanner(false)}
+              className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"
+              title="Dismiss"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <Button
+              variant="cyber"
+              size="sm"
+              onClick={handleOpenMailApp}
+              className="h-8 text-xs font-mono"
+            >
+              <Mail className="w-3.5 h-3.5 mr-1.5" />
+              Open Mail App
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenGmail}
+              className="h-8 text-xs font-mono bg-[#0a1020] border-zinc-700 hover:bg-zinc-800 text-zinc-200"
+            >
+              <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+              Open in Gmail
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenOutlook}
+              className="h-8 text-xs font-mono bg-[#0a1020] border-zinc-700 hover:bg-zinc-800 text-zinc-200"
+            >
+              <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+              Open in Outlook
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCopyEmailBody}
+              className="h-8 text-xs font-mono text-zinc-400 hover:text-white"
+            >
+              {copiedBody ? <Check className="w-3.5 h-3.5 mr-1.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
+              {copiedBody ? "Body Copied!" : "Copy Email Body"}
+            </Button>
+            <span className="text-[11px] font-mono text-zinc-500 ml-auto hidden sm:inline">
+              Includes password + change guide
+            </span>
+          </div>
+
+          {/* Collapsible email preview */}
+          <details className="group">
+            <summary className="cursor-pointer text-[11px] font-mono text-zinc-400 hover:text-cyan-300 list-none flex items-center gap-1.5 mt-1">
+              <span className="group-open:rotate-90 transition-transform">▶</span>
+              Preview email body
+            </summary>
+            <pre className="mt-2 p-3 rounded-lg bg-black/60 border border-zinc-800 text-[11px] font-mono text-zinc-300 whitespace-pre-wrap max-h-64 overflow-auto">
+              {buildApprovalBody(emailDraft)}
+            </pre>
+          </details>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 bg-[#040810] p-3 rounded-xl border border-zinc-800">
@@ -488,8 +679,13 @@ export function AdminApplicationsPanel() {
                   Generate Member Account & Credentials
                 </div>
                 <p className="text-zinc-400 text-[11px] font-sans">
-                  Approving this candidate will create their official member login and profile. Enter their initial password below.
+                  Approving this candidate will create their official member login and profile. Enter their initial password below.{" "}
+                  <span className="text-emerald-400 font-bold">After approval, your mail client will auto-open with a pre-filled welcome email (To, Subject, password & change-guide).</span>
                 </p>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-[11px] font-mono text-emerald-300">
+                  <Mail className="w-3.5 h-3.5 shrink-0" />
+                  <span>Auto-mail: Upon clicking Approve, we’ll redirect to your email with everything filled — just hit Send.</span>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
@@ -548,9 +744,20 @@ export function AdminApplicationsPanel() {
                     onClick={handleCreateMemberFromApp}
                     disabled={isOnboardingLoading}
                   >
-                    {isOnboardingLoading ? "Creating Account..." : "Approve Candidate & Create Member"}
+                    {isOnboardingLoading ? (
+                      "Creating Account..."
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Approve & Open Welcome Email
+                      </>
+                    )}
                   </Button>
                 </div>
+                <p className="text-[11px] font-mono text-zinc-500 text-center">
+                  ✉️ Will auto-fill email to <span className="text-cyan-400">{onboardData.email || "candidate"}</span> with Request ID{" "}
+                  <span className="text-amber-400">{selectedApp.id}</span>, password & login guide.
+                </p>
               </div>
             </div>
           )}

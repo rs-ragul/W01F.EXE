@@ -7,6 +7,15 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfilesWithRoles, ProfileWithRole } from "@/hooks/useProfiles";
 import {
+  buildMailtoLink,
+  buildGmailComposeUrl,
+  buildOutlookComposeUrl,
+  buildApprovalBody,
+  buildApprovalSubject,
+  getLoginUrl,
+  type ApprovalMailData,
+} from "@/lib/approvalMail";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -38,7 +47,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Plus, Trash2, Edit } from "lucide-react";
+import {
+  Users,
+  Plus,
+  Trash2,
+  Edit,
+  Mail,
+  Send,
+  Copy,
+  Check,
+  CheckCircle2,
+  ExternalLink,
+  X,
+} from "lucide-react";
 
 export function AdminMembersPanel() {
   const { data: profiles, isLoading, refetch } = useProfilesWithRoles();
@@ -60,6 +81,12 @@ export function AdminMembersPanel() {
     department: "",
     team_role: "",
   });
+
+  // Post-create email state — mirrors AdminApplicationsPanel for manual adds
+  const [emailDraft, setEmailDraft] = useState<ApprovalMailData | null>(null);
+  const [showEmailBanner, setShowEmailBanner] = useState(false);
+  const [copiedBody, setCopiedBody] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
 
   const setUserRole = async (userId: string, role: "admin" | "member") => {
     const { error: deleteError } = await supabase
@@ -117,8 +144,28 @@ export function AdminMembersPanel() {
 
       toast({
         title: "Member Added",
-        description: `${newMember.email} has been added as ${newMember.role}`,
+        description: `${newMember.email} has been added as ${newMember.role}. Opening email draft…`,
       });
+
+      // ── Build welcome email for manual add (uses DIRECT-ADD id) ──
+      const manualMailData: ApprovalMailData = {
+        requestId: `DIRECT-ADD-${Date.now().toString(36).toUpperCase()}`,
+        candidateName: newMember.email.split("@")[0] || "Operative",
+        candidateEmail: newMember.email,
+        password: newMember.password,
+        teamRole: newMember.team_role || (newMember.role === "admin" ? "Admin" : "Operative"),
+        department: newMember.department || "W0LF.EXE",
+        loginUrl: getLoginUrl(),
+      };
+      setEmailDraft(manualMailData);
+      setShowEmailBanner(true);
+      try {
+        const mailtoLink = buildMailtoLink(manualMailData);
+        const win = window.open(mailtoLink, "_blank");
+        if (!win) window.location.href = mailtoLink;
+      } catch (e) {
+        console.error("Failed to open mail client:", e);
+      }
 
       setNewMember({ email: "", password: "", role: "member", department: "", team_role: "" });
       setIsAddOpen(false);
@@ -307,18 +354,63 @@ export function AdminMembersPanel() {
                   placeholder="Technical Support"
                 />
               </div>
+              <p className="text-[11px] font-mono text-zinc-500 flex items-center gap-1.5">
+                <Mail className="w-3 h-3 text-emerald-400" />
+                After creation, your mail app will open with a pre-filled welcome email (password + login guide).
+              </p>
               <Button
                 variant="cyber"
                 className="w-full"
                 onClick={handleAddMember}
                 disabled={isLoading2}
               >
-                {isLoading2 ? "Creating..." : "Create Member"}
+                {isLoading2 ? "Creating..." : "Create Member & Open Email"}
               </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Success Email Banner — shown after manual member create */}
+      {showEmailBanner && emailDraft && (
+        <div className="mb-6 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xl p-4 space-y-3 animate-fade-in">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
+                <Send className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div>
+                <h4 className="font-display font-bold text-emerald-300 text-sm flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Member Created — Email Draft Ready
+                </h4>
+                <p className="text-xs font-mono text-emerald-200/80 mt-1">
+                  Welcome email for <span className="text-white font-bold">{emailDraft.candidateEmail}</span> — auto-filled and sent to your mail app. If it didn’t open, use the quick actions below.
+                </p>
+                <div className="mt-2 p-2.5 rounded-lg bg-black/40 border border-emerald-800/30 font-mono text-[11px] space-y-1">
+                  <div className="flex flex-wrap gap-1"><span className="text-zinc-500">To:</span> <span className="text-white">{emailDraft.candidateEmail}</span></div>
+                  <div className="flex flex-wrap gap-1"><span className="text-zinc-500">Subject:</span> <span className="text-white">{buildApprovalSubject(emailDraft)}</span></div>
+                  <div className="flex items-center gap-2"><span className="text-zinc-500">Password:</span> <span className="text-amber-300 font-bold">{emailDraft.password}</span>
+                    <button onClick={async () => { await navigator.clipboard.writeText(emailDraft.password); setCopiedPassword(true); setTimeout(()=>setCopiedPassword(false),2000); toast({title:"Password Copied"}); }} className="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] flex items-center gap-1">
+                      {copiedPassword ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}{copiedPassword ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button onClick={() => setShowEmailBanner(false)} className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"><X className="w-3.5 h-3.5" /></button>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <Button variant="cyber" size="sm" onClick={() => { const m = buildMailtoLink(emailDraft); const w = window.open(m, "_blank"); if(!w) window.location.href=m; }} className="h-8 text-xs font-mono"><Mail className="w-3.5 h-3.5 mr-1.5" />Open Mail App</Button>
+            <Button variant="outline" size="sm" onClick={() => window.open(buildGmailComposeUrl(emailDraft), "_blank")} className="h-8 text-xs font-mono bg-[#0a1020] border-zinc-700 hover:bg-zinc-800 text-zinc-200"><ExternalLink className="w-3.5 h-3.5 mr-1.5" />Open in Gmail</Button>
+            <Button variant="outline" size="sm" onClick={() => window.open(buildOutlookComposeUrl(emailDraft), "_blank")} className="h-8 text-xs font-mono bg-[#0a1020] border-zinc-700 hover:bg-zinc-800 text-zinc-200"><ExternalLink className="w-3.5 h-3.5 mr-1.5" />Open in Outlook</Button>
+            <Button variant="ghost" size="sm" onClick={async () => { await navigator.clipboard.writeText(buildApprovalBody(emailDraft)); setCopiedBody(true); setTimeout(()=>setCopiedBody(false),2000); toast({title:"Email Body Copied"}); }} className="h-8 text-xs font-mono text-zinc-400 hover:text-white">
+              {copiedBody ? <Check className="w-3.5 h-3.5 mr-1.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}{copiedBody ? "Body Copied!" : "Copy Email Body"}
+            </Button>
+          </div>
+          <details className="group"><summary className="cursor-pointer text-[11px] font-mono text-zinc-400 hover:text-cyan-300 list-none flex items-center gap-1.5 mt-1"><span className="group-open:rotate-90 transition-transform">▶</span>Preview email body</summary><pre className="mt-2 p-3 rounded-lg bg-black/60 border border-zinc-800 text-[11px] font-mono text-zinc-300 whitespace-pre-wrap max-h-64 overflow-auto">{buildApprovalBody(emailDraft)}</pre></details>
+        </div>
+      )}
 
       {isLoading ? (
         <p className="text-muted-foreground text-sm">Loading members...</p>
