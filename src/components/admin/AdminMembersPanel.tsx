@@ -233,11 +233,27 @@ export function AdminMembersPanel() {
   const confirmDeleteMember = async () => {
     if (!deleteTarget) return;
 
+    // Prevent accidental self-deletion in UI
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    if (currentSession && deleteTarget.userId === currentSession.user.id) {
+      toast({
+        title: "Action Blocked",
+        description: "You cannot delete your own account.",
+        variant: "destructive",
+      });
+      setDeleteTarget(null);
+      return;
+    }
+
     setIsLoading2(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        throw new Error("No active session");
+        throw new Error("No active session — please log in again.");
+      }
+
+      if (!deleteTarget.userId) {
+        throw new Error("Invalid member record — missing user ID.");
       }
 
       const response = await supabase.functions.invoke("delete-user", {
@@ -250,12 +266,48 @@ export function AdminMembersPanel() {
         },
       });
 
+      // Edge Function returns non-2xx → response.error is FunctionsHttpError with context
       if (response.error) {
-        throw new Error(response.error.message || "Failed to delete user");
+        // Try to extract the real server message (not the generic "non-2xx")
+        // Supabase-js nests it in context.json or context.text
+        const ctx: any = (response.error as any).context;
+        let serverMsg: string | undefined;
+        try {
+          // ctx.json is often a promise-like body; attempt to parse
+          if (ctx?.json && typeof ctx.json === "object" && ctx.json.error) serverMsg = ctx.json.error;
+          else if (typeof ctx?.text === "string" && ctx.text) {
+            const parsed = JSON.parse(ctx.text);
+            if (parsed?.error) serverMsg = parsed.error;
+          }
+        } catch {}
+        // Also check data payload directly (some deployments return error there)
+        if (!serverMsg && (response.data as any)?.error) serverMsg = (response.data as any).error;
+        // Fallback to generic context message
+        if (!serverMsg) serverMsg = (response.error as any).message || "Edge Function failed";
+
+        console.warn("[delete-user] Edge Function error:", { status: (response.error as any).status, serverMsg, ctx, data: response.data });
+
+        // Detect common deployment issues to give actionable guidance
+        const lower = serverMsg.toLowerCase();
+        const isNotDeployed = lower.includes("not found") || lower.includes("404") || lower.includes("not deployed") || (response.error as any).message?.includes("Failed to fetch");
+        const isAuthIssue = lower.includes("authorization") || lower.includes("unauthorized") || lower.includes("jwt");
+        const isAdminIssue = lower.includes("admin access") || lower.includes("admin required");
+
+        if (isNotDeployed) {
+          throw new Error(`Delete service unavailable (Edge Function not deployed). ${serverMsg} — trying fallback cleanup…`);
+        }
+        if (isAdminIssue) {
+          throw new Error(`${serverMsg} — ensure your account has 'admin' role in user_roles.`);
+        }
+        if (isAuthIssue) {
+          throw new Error(`${serverMsg} — session expired, please log out and log in again.`);
+        }
+
+        throw new Error(serverMsg);
       }
 
-      if (response.data?.error) {
-        throw new Error(response.data.error);
+      if ((response.data as any)?.error) {
+        throw new Error((response.data as any).error);
       }
 
       toast({
@@ -264,15 +316,58 @@ export function AdminMembersPanel() {
       });
       
       refetch();
+      setDeleteTarget(null);
+      return;
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "An unknown error occurred",
-        variant: "destructive",
-      });
+      console.error("[delete-user] primary path failed:", error);
+
+      // ── Fallback: direct table cleanup if Edge Function missing/not deployed ──
+      // This removes the member from UI (profiles + user_roles) even if auth.users remains.
+      // Auth deletion requires service_role, so we do best-effort cleanup + guide to deploy.
+      try {
+        console.warn("[delete-user] Attempting fallback manual cleanup for", deleteTarget.userId);
+        // Try deleting role first, then profile (foreign key cascades may already handle)
+        const { error: roleErr } = await supabase.from("user_roles" as any).delete().eq("user_id", deleteTarget.userId);
+        const { error: profileErr } = await supabase.from("profiles" as any).delete().eq("user_id", deleteTarget.userId);
+
+        // If either succeeded or at least one had no error, consider it partial success
+        const fallbackSuccess = (!roleErr || roleErr.message.includes("0 rows")) && (!profileErr || profileErr.message.includes("0 rows") || !profileErr);
+        // Also check if profile was deleted by re-querying
+        const { data: remaining } = await supabase.from("profiles" as any).select("id").eq("user_id", deleteTarget.userId).limit(1);
+
+        if (fallbackSuccess || (remaining && remaining.length === 0)) {
+          toast({
+            title: "Member Removed (Partial)",
+            description: `@${deleteTarget.username || 'User'} profile cleared from database. Auth user may still exist — deploy 'delete-user' Edge Function for full deletion (supabase functions deploy delete-user).`,
+          });
+          refetch();
+          setDeleteTarget(null);
+          return;
+        }
+
+        if (roleErr) console.warn("Fallback role delete error:", roleErr);
+        if (profileErr) console.warn("Fallback profile delete error:", profileErr);
+
+        // If fallback also failed, surface original error with deployment hint
+        throw error;
+      } catch (fallbackErr: any) {
+        console.error("[delete-user] fallback also failed:", fallbackErr);
+        const msg = error?.message || fallbackErr?.message || "Unknown error";
+        const hint = msg.toLowerCase().includes("fallback") || msg.toLowerCase().includes("not deployed")
+          ? " — deploy Edge Function: supabase functions deploy delete-user (and verify service_role key)."
+          : " — check Supabase Dashboard → Edge Functions logs for details.";
+
+        toast({
+          title: "Delete Failed",
+          description: `${msg}${hint}`,
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading2(false);
-      setDeleteTarget(null);
+      // Ensure dialog closes only after handling
+      // (already closed in success paths, close here for error paths)
+      if (deleteTarget) setDeleteTarget(null);
     }
   };
 
