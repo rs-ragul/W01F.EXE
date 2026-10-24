@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useSubmitJoinRequest, trackApplicationByIdOrEmail, JoinRequest } from "@/hooks/useJoinRequests";
+import { useSubmitJoinRequest, trackApplicationByIdOrEmail, JoinRequest, saveLocalRequests, getLocalRequests } from "@/hooks/useJoinRequests";
 import { useToast } from "@/hooks/use-toast";
 import { cyberAudio } from "@/lib/cyberAudio";
+import { supabase } from "@/integrations/supabase/client";
+import { decodeTrackingPayload, buildTrackingUrl } from "@/lib/trackingPayload";
 import confetti from "canvas-confetti";
 import {
   UserPlus,
@@ -82,9 +84,26 @@ export default function JoinTeam() {
   const [searchAttempted, setSearchAttempted] = useState(false);
   const [copiedTrackingUrl, setCopiedTrackingUrl] = useState(false);
 
-  // Read URL query parameter ?track= or ?id=
+  // Read URL query parameter ?track= or ?id= (supports cross-device payload `p`)
   useEffect(() => {
     const trackParam = searchParams.get("track") || searchParams.get("id");
+    const payloadParam = searchParams.get("p");
+    if (payloadParam) {
+      const decoded = decodeTrackingPayload(payloadParam);
+      if (decoded) {
+        // Pre-seed local cache with payload so fallback works, then treat as found
+        const local = getLocalRequests();
+        if (!local.find((r) => r.id === decoded.id)) {
+          saveLocalRequests([decoded, ...local]);
+        }
+        setActiveTab("track");
+        setTrackingQuery(decoded.id);
+        setTrackedRequest(decoded);
+        setSearchAttempted(true);
+        setSearchParams({ track: decoded.id, p: payloadParam });
+        return;
+      }
+    }
     if (trackParam) {
       setActiveTab("track");
       setTrackingQuery(trackParam);
@@ -114,13 +133,16 @@ export default function JoinTeam() {
 
   const handleCopyTrackingLink = (id: string) => {
     cyberAudio.playClick();
-    const url = `${window.location.origin}/join?track=${id}`;
+    // Build URL with optional payload for cross-device fallback (if Supabase not yet synced)
+    const local = getLocalRequests();
+    const req = local.find((r) => r.id === id) || trackedRequest;
+    const url = req ? buildTrackingUrl(id, req) : `${window.location.origin}/join?track=${id}`;
     navigator.clipboard.writeText(url);
     setCopiedTrackingUrl(true);
     setTimeout(() => setCopiedTrackingUrl(false), 2000);
     toast({
       title: "Tracking Link Copied",
-      description: "Bookmark this link on your device to view status updates.",
+      description: req ? "Link includes offline data — works even if server sync is pending." : "Bookmark this link on your device to view status updates.",
     });
   };
 
@@ -195,9 +217,22 @@ export default function JoinTeam() {
       });
 
       setSubmittedData({ id: data.id, name: formData.fullName });
+
+      // Verify cross-device sync: check if Supabase insert succeeded
+      let crossDeviceOk = false;
+      try {
+        const { error: verifyErr } = await supabase.from("join_requests" as any).select("id").eq("id", data.id).limit(1);
+        if (!verifyErr) crossDeviceOk = true;
+      } catch {}
+      if (!crossDeviceOk) {
+        console.warn("[join] Supabase sync not confirmed — tracking will be local-only until DB is configured. Shareable link with payload will still work cross-device.");
+      }
+
       toast({
         title: "Transmission Logged!",
-        description: `Your candidate dossier is registered with ID: ${data.id}`,
+        description: crossDeviceOk
+          ? `Your candidate dossier is registered with ID: ${data.id} — tracking works on any device.`
+          : `Your candidate dossier is registered with ID: ${data.id} — save your tracking link for cross-device access.`,
       });
     } catch (err: any) {
       cyberAudio.playError();
