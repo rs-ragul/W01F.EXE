@@ -354,17 +354,13 @@ export function AdminMembersPanel() {
                   placeholder="Technical Support"
                 />
               </div>
-              <p className="text-[11px] font-mono text-zinc-500 flex items-center gap-1.5">
-                <Mail className="w-3 h-3 text-emerald-400" />
-                After creation, your mail app will open with a pre-filled welcome email (password + login guide).
-              </p>
               <Button
                 variant="cyber"
                 className="w-full"
                 onClick={handleAddMember}
                 disabled={isLoading2}
               >
-                {isLoading2 ? "Creating..." : "Create Member & Open Email"}
+                {isLoading2 ? "Creating..." : "Create Member"}
               </Button>
             </div>
           </DialogContent>

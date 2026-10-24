@@ -679,13 +679,8 @@ export function AdminApplicationsPanel() {
                   Generate Member Account & Credentials
                 </div>
                 <p className="text-zinc-400 text-[11px] font-sans">
-                  Approving this candidate will create their official member login and profile. Enter their initial password below.{" "}
-                  <span className="text-emerald-400 font-bold">After approval, your mail client will auto-open with a pre-filled welcome email (To, Subject, password & change-guide).</span>
+                  Set a temporary password for the new member. On approval, a welcome email will be prepared automatically.
                 </p>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-[11px] font-mono text-emerald-300">
-                  <Mail className="w-3.5 h-3.5 shrink-0" />
-                  <span>Auto-mail: Upon clicking Approve, we’ll redirect to your email with everything filled — just hit Send.</span>
-                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
@@ -749,15 +744,11 @@ export function AdminApplicationsPanel() {
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        Approve & Open Welcome Email
+                        Approve & Create Member
                       </>
                     )}
                   </Button>
                 </div>
-                <p className="text-[11px] font-mono text-zinc-500 text-center">
-                  ✉️ Will auto-fill email to <span className="text-cyan-400">{onboardData.email || "candidate"}</span> with Request ID{" "}
-                  <span className="text-amber-400">{selectedApp.id}</span>, password & login guide.
-                </p>
               </div>
             </div>
           )}

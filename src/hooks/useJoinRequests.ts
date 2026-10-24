@@ -48,16 +48,15 @@ export function useJoinRequests() {
     queryKey: ["join_requests"],
     queryFn: async (): Promise<JoinRequest[]> => {
       try {
-        // Try querying Supabase join_requests table
+        // Try querying Supabase join_requests table — works cross-device
         const { data, error } = await supabase
           .from("join_requests" as any)
           .select("*")
           .order("created_at", { ascending: false });
 
         if (!error && data) {
-          // Sync with local storage
+          // Sync with local storage (merge for offline cache)
           const local = getLocalRequests();
-          // Merge unique requests
           const map = new Map<string, JoinRequest>();
           local.forEach((r) => map.set(r.id, r));
           (data as JoinRequest[]).forEach((r) => map.set(r.id, r));
@@ -67,8 +66,11 @@ export function useJoinRequests() {
           saveLocalRequests(merged);
           return merged;
         }
-      } catch {
-        // Fallback to local storage
+        if (error) {
+          console.warn("[join_requests] Supabase fetch failed:", error.message);
+        }
+      } catch (e) {
+        console.warn("[join_requests] Supabase fetch exception:", e);
       }
 
       return getLocalRequests();
@@ -76,39 +78,76 @@ export function useJoinRequests() {
   });
 }
 
-// Search/track a specific application by ID or Email
+// Search/track a specific application by ID or Email — WORKS CROSS-DEVICE
 export async function trackApplicationByIdOrEmail(queryStr: string): Promise<JoinRequest | null> {
-  const trimmed = queryStr.trim().toLowerCase();
-  if (!trimmed) return null;
+  const trimmedRaw = queryStr.trim();
+  if (!trimmedRaw) return null;
 
-  // 1. Check local cache first
-  const local = getLocalRequests();
-  const localMatch = local.find(
-    (r) =>
-      r.id.toLowerCase() === trimmed ||
-      r.id.toLowerCase().startsWith(trimmed) ||
-      r.email.toLowerCase() === trimmed
-  );
-
-  // 2. Query Supabase
+  // 1. Query Supabase first — this makes tracking work from any device/browser
+  // RLS allows public SELECT with true (see 20261010000000_create_join_requests.sql)
   try {
-    // Check by exact id or email
-    const { data, error } = await supabase
-      .from("join_requests" as any)
-      .select("*")
-      .or(`id.eq.${trimmed},email.eq.${trimmed}`)
-      .limit(1);
+    const isEmail = trimmedRaw.includes("@");
+    let data: any[] | null = null;
+    let error: any = null;
+
+    if (isEmail) {
+      // Email: case-insensitive exact match
+      const res = await supabase
+        .from("join_requests" as any)
+        .select("*")
+        .ilike("email", trimmedRaw)
+        .limit(1);
+      data = res.data;
+      error = res.error;
+    } else {
+      // ID: case-insensitive exact match (W0LF-2026-X8F9 vs w0lf-2026-x8f9)
+      const res = await supabase
+        .from("join_requests" as any)
+        .select("*")
+        .ilike("id", trimmedRaw)
+        .limit(1);
+      data = res.data;
+      error = res.error;
+
+      // Fallback: support partial ID prefix search (user may paste shortened ID)
+      if ((!error && (!data || data.length === 0)) && trimmedRaw.length >= 6) {
+        const partial = await supabase
+          .from("join_requests" as any)
+          .select("*")
+          .ilike("id", `${trimmedRaw}%`)
+          .limit(5);
+        if (!partial.error && partial.data && partial.data.length > 0) {
+          data = partial.data;
+          error = partial.error;
+        }
+      }
+    }
 
     if (!error && data && data.length > 0) {
       const match = data[0] as JoinRequest;
-      // Sync into local cache
+      // Sync into local cache for offline/fast access
+      const local = getLocalRequests();
       const existing = local.filter((r) => r.id !== match.id);
       saveLocalRequests([match, ...existing]);
       return match;
     }
-  } catch {
-    // Supabase error or table not yet migrated, fall through to local
+
+    if (error) {
+      console.warn("[track] Supabase query error:", error.message);
+    }
+  } catch (e) {
+    console.warn("[track] Supabase exception:", e);
   }
+
+  // 2. Fallback to local cache (offline or same-browser)
+  const local = getLocalRequests();
+  const lower = trimmedRaw.toLowerCase();
+  const localMatch = local.find(
+    (r) =>
+      r.id.toLowerCase() === lower ||
+      r.id.toLowerCase().startsWith(lower) ||
+      r.email.toLowerCase() === lower
+  );
 
   return localMatch || null;
 }
@@ -129,14 +168,15 @@ export function useSubmitJoinRequest() {
         created_at: new Date().toISOString(),
       };
 
-      // 1. Always persist to local cache immediately
+      // 1. Always persist to local cache immediately (instant feedback)
       const current = getLocalRequests();
       const updated = [newRequest, ...current];
       saveLocalRequests(updated);
 
-      // 2. Try inserting into Supabase join_requests if table exists
+      // 2. Insert into Supabase join_requests for cross-device tracking
+      // Public INSERT is allowed via RLS: "Allow public insert to join_requests" WITH CHECK (true)
       try {
-        await supabase.from("join_requests" as any).insert({
+        const { error } = await supabase.from("join_requests" as any).insert({
           id: newRequest.id,
           full_name: newRequest.full_name,
           email: newRequest.email,
@@ -153,8 +193,14 @@ export function useSubmitJoinRequest() {
           status: newRequest.status,
           created_at: newRequest.created_at,
         });
-      } catch {
-        // Ignore Supabase error if table schema difference
+
+        if (error) {
+          console.warn("[submit] Supabase insert failed (will retry via local only):", error.message);
+          // Do NOT throw — local save already succeeded, user should still get ID
+          // Admin will see it locally; once Supabase is reachable, it will sync.
+        }
+      } catch (e) {
+        console.warn("[submit] Supabase insert exception:", e);
       }
 
       return newRequest;
@@ -176,19 +222,22 @@ export function useUpdateJoinRequestStatus() {
       id: string;
       status: "pending" | "approved" | "rejected";
     }) => {
-      // 1. Update local
+      // 1. Update local cache
       const current = getLocalRequests();
       const updated = current.map((r) => (r.id === id ? { ...r, status, updated_at: new Date().toISOString() } : r));
       saveLocalRequests(updated);
 
-      // 2. Try updating Supabase
+      // 2. Update Supabase for cross-device visibility
       try {
-        await supabase
+        const { error } = await supabase
           .from("join_requests" as any)
           .update({ status, updated_at: new Date().toISOString() })
           .eq("id", id);
-      } catch {
-        // Ignore
+        if (error) {
+          console.warn("[updateStatus] Supabase update failed:", error.message);
+        }
+      } catch (e) {
+        console.warn("[updateStatus] Supabase exception:", e);
       }
 
       return { id, status };
@@ -209,11 +258,14 @@ export function useDeleteJoinRequest() {
       const updated = current.filter((r) => r.id !== id);
       saveLocalRequests(updated);
 
-      // 2. Try deleting from Supabase
+      // 2. Delete from Supabase
       try {
-        await supabase.from("join_requests" as any).delete().eq("id", id);
-      } catch {
-        // Ignore
+        const { error } = await supabase.from("join_requests" as any).delete().eq("id", id);
+        if (error) {
+          console.warn("[delete] Supabase delete failed:", error.message);
+        }
+      } catch (e) {
+        console.warn("[delete] Supabase exception:", e);
       }
 
       return id;
