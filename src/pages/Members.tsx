@@ -82,9 +82,9 @@ export default function Members() {
                       onMouseEnter={() => cyberAudio.playHover()}
                     >
                       <div className="h-full rounded-[calc(1rem-2px)] bg-[#070d18]/90 p-6 flex flex-col justify-between backdrop-blur-xl relative overflow-hidden">
-                        {/* Corner Reticle */}
+                        {/* Corner Reticle — null-safe fallback */}
                         <div className="absolute top-2 right-2 text-[10px] font-mono text-zinc-600 select-none">
-                          AGENT-{member.username.slice(0, 4).toUpperCase()}
+                          AGENT-{((member.username || member.full_name || member.id || "W0LF") as string).slice(0, 4).toUpperCase()}
                         </div>
 
                         <div>
